@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" role="img" aria-label="Commuter motorcycle illustration">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/><stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="tank" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ef4444"/><stop offset="55%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f1f5f9"/><stop offset="50%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0f172a" stop-opacity=".28"/><stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#bg)"/>
+  <ellipse cx="320" cy="330" rx="230" ry="26" fill="url(#shadow)"/>
+  <!-- wheels -->
+  <g>
+    <circle cx="160" cy="290" r="62" fill="#1e293b"/><circle cx="160" cy="290" r="46" fill="#0f172a"/>
+    <circle cx="160" cy="290" r="30" fill="url(#chrome)"/><circle cx="160" cy="290" r="9" fill="#475569"/>
+    <circle cx="480" cy="290" r="62" fill="#1e293b"/><circle cx="480" cy="290" r="46" fill="#0f172a"/>
+    <circle cx="480" cy="290" r="30" fill="url(#chrome)"/><circle cx="480" cy="290" r="9" fill="#475569"/>
+  </g>
+  <!-- frame -->
+  <path d="M175 285 L255 205 L360 205 L430 250 L480 285" stroke="#334155" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M258 208 L300 285 L430 285" stroke="#334155" stroke-width="11" fill="none" stroke-linecap="round"/>
+  <!-- engine -->
+  <rect x="288" y="230" width="86" height="62" rx="10" fill="#475569"/>
+  <rect x="296" y="238" width="70" height="12" rx="4" fill="#64748b"/>
+  <rect x="296" y="256" width="70" height="10" rx="4" fill="#64748b"/>
+  <!-- tank -->
+  <path d="M250 200 Q300 168 372 182 L382 214 Q320 226 252 218 Z" fill="url(#tank)"/>
+  <path d="M262 190 Q305 176 360 186" stroke="#fecaca" stroke-width="4" fill="none" opacity=".55" stroke-linecap="round"/>
+  <!-- seat -->
+  <path d="M378 186 Q436 180 462 196 Q468 206 456 210 L384 214 Z" fill="#0f172a"/>
+  <!-- handlebar + headlight -->
+  <path d="M252 202 L228 150" stroke="#334155" stroke-width="11" stroke-linecap="round"/>
+  <path d="M196 146 L266 146" stroke="#334155" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="214" cy="176" r="24" fill="url(#chrome)"/><circle cx="214" cy="176" r="15" fill="#fef9c3"/>
+  <!-- forks -->
+  <path d="M228 158 L168 274" stroke="url(#chrome)" stroke-width="11" stroke-linecap="round"/>
+  <!-- exhaust -->
+  <path d="M372 276 L500 292" stroke="url(#chrome)" stroke-width="15" stroke-linecap="round"/>
+  <!-- rear shock + fender -->
+  <path d="M430 250 L470 268" stroke="#64748b" stroke-width="9" stroke-linecap="round"/>
+  <path d="M424 232 Q484 224 522 258" stroke="#b91c1c" stroke-width="12" fill="none" stroke-linecap="round"/>
+</svg>

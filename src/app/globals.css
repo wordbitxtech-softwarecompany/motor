@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .font-urdu {
+    font-family: system-ui, -apple-system, 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', sans-serif;
+  }
+}
+
+/* ── Urdu / RTL support ─────────────────────────────── */
+html.lang-ur body {
+  font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", system-ui, sans-serif;
+  line-height: 2;
+}
+html[dir="rtl"] .rtl-flip { transform: scaleX(-1); }

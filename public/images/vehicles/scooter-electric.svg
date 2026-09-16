@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" role="img" aria-label="Electric scooter illustration">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0fdfa"/><stop offset="100%" stop-color="#ccfbf1"/>
+    </linearGradient>
+    <linearGradient id="body3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#e2e8f0"/><stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="teal3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2dd4bf"/><stop offset="100%" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="chrome3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f1f5f9"/><stop offset="50%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <radialGradient id="shadow3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0f172a" stop-opacity=".26"/><stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#bg3)"/>
+  <ellipse cx="320" cy="334" rx="215" ry="24" fill="url(#shadow3)"/>
+  <!-- wheels -->
+  <circle cx="176" cy="292" r="54" fill="#111827"/><circle cx="176" cy="292" r="34" fill="#1f2937"/>
+  <circle cx="176" cy="292" r="18" fill="url(#chrome3)"/>
+  <circle cx="470" cy="292" r="54" fill="#111827"/><circle cx="470" cy="292" r="34" fill="#1f2937"/>
+  <circle cx="470" cy="292" r="18" fill="url(#chrome3)"/>
+  <!-- floorboard + body -->
+  <path d="M226 268 L400 268 L418 250 L246 250 Z" fill="#64748b"/>
+  <path d="M246 250 Q252 196 296 190 L318 190 L326 250 Z" fill="url(#body3)"/>
+  <path d="M326 250 Q346 194 414 190 Q470 190 486 238 L500 268 L414 268 Z" fill="url(#body3)"/>
+  <path d="M352 206 Q414 198 456 224" stroke="url(#teal3)" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <!-- seat -->
+  <path d="M348 190 Q404 176 456 190 Q466 200 452 206 L356 206 Z" fill="#0f172a"/>
+  <!-- front column + handlebar -->
+  <path d="M298 190 L268 116" stroke="url(#chrome3)" stroke-width="14" stroke-linecap="round"/>
+  <path d="M232 112 L308 112" stroke="#334155" stroke-width="11" stroke-linecap="round"/>
+  <circle cx="232" cy="112" r="9" fill="#0f172a"/><circle cx="308" cy="112" r="9" fill="#0f172a"/>
+  <!-- apron + headlight -->
+  <path d="M258 132 Q288 128 300 152 L300 232 Q268 236 254 214 Z" fill="url(#body3)"/>
+  <path d="M256 158 L292 152 L294 178 L258 184 Z" fill="#fef9c3"/>
+  <!-- digital display -->
+  <rect x="256" y="122" width="46" height="18" rx="5" fill="#0f172a"/>
+  <rect x="262" y="127" width="20" height="7" rx="2" fill="#2dd4bf"/>
+  <!-- front fork -->
+  <path d="M272 150 L182 274" stroke="url(#chrome3)" stroke-width="11" stroke-linecap="round"/>
+  <!-- battery / EV badge -->
+  <rect x="330" y="256" width="72" height="26" rx="8" fill="url(#teal3)"/>
+  <text x="366" y="274" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#04302c">EV</text>
+  <!-- rear fender -->
+  <path d="M436 236 Q490 232 512 268" stroke="url(#teal3)" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <!-- charge bolt -->
+  <path d="M470 150 L456 178 L470 178 L462 202 L488 170 L472 170 L482 150 Z" fill="#0d9488" opacity=".9"/>
+</svg>

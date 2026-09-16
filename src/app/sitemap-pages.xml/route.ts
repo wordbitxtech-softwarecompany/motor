@@ -1,0 +1,38 @@
+import { urlSet } from '@/lib/sitemap-utils';
+export const dynamic = 'force-static';
+export function GET() {
+  return urlSet([
+    { path: '/', priority: 1.0, changefreq: 'daily' },
+    { path: '/cars', priority: 0.9, changefreq: 'daily' },
+    { path: '/bikes', priority: 0.9, changefreq: 'daily' },
+    { path: '/brands', priority: 0.9, changefreq: 'weekly' },
+    { path: '/new-cars-2026', priority: 0.9, changefreq: 'daily' },
+    { path: '/new-bikes-2026', priority: 0.9, changefreq: 'daily' },
+    { path: '/new-cars-pakistan', priority: 0.8 },
+    { path: '/used-cars', priority: 0.9, changefreq: 'daily' },
+    { path: '/used-cars-lahore', priority: 0.8 },
+    { path: '/electric-cars-pakistan', priority: 0.8 },
+    { path: '/hybrid-cars-pakistan', priority: 0.8 },
+    { path: '/phev-cars-pakistan', priority: 0.7 },
+    { path: '/reev-cars-pakistan', priority: 0.7 },
+    { path: '/upcoming-cars-pakistan', priority: 0.8 },
+    { path: '/cars-in-pakistan', priority: 0.8 },
+    { path: '/compare', priority: 0.7 },
+    { path: '/blog', priority: 0.8, changefreq: 'daily' },
+    { path: '/rent', priority: 0.6 },
+    { path: '/sell', priority: 0.6 },
+    { path: '/financing', priority: 0.6 },
+    { path: '/test-drive', priority: 0.6 },
+    { path: '/services', priority: 0.5 },
+    { path: '/offers', priority: 0.5 },
+    { path: '/reviews', priority: 0.5 },
+    { path: '/about', priority: 0.5, changefreq: 'monthly' },
+    { path: '/contact', priority: 0.5, changefreq: 'monthly' },
+    { path: '/reviews', priority: 0.7, changefreq: 'weekly' },
+    { path: '/faq', priority: 0.6, changefreq: 'monthly' },
+    { path: '/editorial-policy', priority: 0.4, changefreq: 'yearly' },
+    { path: '/disclaimer', priority: 0.4, changefreq: 'yearly' },
+    { path: '/privacy', priority: 0.3, changefreq: 'yearly' },
+    { path: '/terms', priority: 0.3, changefreq: 'yearly' },
+  ]);
+}
