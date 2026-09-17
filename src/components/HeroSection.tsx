@@ -26,9 +26,8 @@ export default function HeroSection() {
           className="w-full h-full object-cover object-[center_42%] scale-105"
           fetchPriority="high"
         />
-        {/* Same showroom photo as before, overlay ~50% instead of the original 78%. */}
-        <div className="absolute inset-0 bg-slate-950/50" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-slate-950/28" />
+        <div className="absolute inset-0 bg-slate-950/72" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-slate-950/45" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-20 sm:pb-24 text-center">
