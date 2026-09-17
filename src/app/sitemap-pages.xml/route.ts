@@ -5,6 +5,7 @@ export function GET() {
     { path: '/', priority: 1.0, changefreq: 'daily' },
     { path: '/cars', priority: 0.9, changefreq: 'daily' },
     { path: '/bikes', priority: 0.9, changefreq: 'daily' },
+    { path: '/scooties', priority: 0.9, changefreq: 'daily' },
     { path: '/brands', priority: 0.9, changefreq: 'weekly' },
     { path: '/new-cars-2026', priority: 0.9, changefreq: 'daily' },
     { path: '/new-bikes-2026', priority: 0.9, changefreq: 'daily' },

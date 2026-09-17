@@ -18,6 +18,7 @@ const NAV_ITEMS = [
   { key: 'nav.usedCars', label: 'Used Cars', href: '/used-cars' },
   { key: 'nav.newCars', label: 'New Cars', href: '/new-cars-pakistan' },
   { key: 'nav.bikes', label: 'Bikes', href: '/bikes' },
+  { key: 'nav.scooties', label: 'Scooties', href: '/scooties' },
   { key: 'nav.evHybrid', label: 'EV & Hybrid', href: '/electric-cars-pakistan', highlight: true },
   { key: 'nav.brands', label: 'Brands', href: '/brands' },
   { key: 'nav.compare', label: 'Compare', href: '/compare' },
@@ -43,8 +44,10 @@ export default function Header() {
   function onSearch(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const q = String(new FormData(e.currentTarget).get('q') || '').trim();
-    const bikeHint = /\b(bike|cd 70|cg 125|ybr|scooter|scooty)\b/i.test(q);
-    router.push(`${bikeHint ? '/bikes' : '/cars'}${q ? `?q=${encodeURIComponent(q)}` : ''}`);
+    const bikeHint = /\b(bike|cd 70|cg 125|ybr|motorcycle)\b/i.test(q);
+    const scootyHint = /\b(scooty|scooter|evee|yadea|wego|pcx)\b/i.test(q);
+    const dest = scootyHint ? '/scooties' : bikeHint ? '/bikes' : '/cars';
+    router.push(`${dest}${q ? `?q=${encodeURIComponent(q)}` : ''}`);
     setMobileMenuOpen(false);
   }
 

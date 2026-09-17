@@ -50,18 +50,7 @@ export const BRANDS: Brand[] = [
     accent: 'from-violet-600 to-indigo-900',
     tagline: 'GAC AION battery-electric crossovers — market introduction Nov 2025, official pricing/booking from May 2026.',
     models: [
-      { name: 'UT', body: 'Hatchback', pt: 'EV', price: 0, year: 2026, status: 'New Arrival', battery: '44 kWh', range: '420 km', launchedAt: '2025-11-06' },
-      { name: 'V', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'New Arrival', battery: '70 kWh', range: '520 km', launchedAt: '2025-11-06' },
       { name: 'ES', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '58.8 kWh', range: '510 km', launchedAt: '2026-12-01' },
-    ],
-  },
-  {
-    name: 'Alektra', slug: 'alektra', origin: 'Pakistan', kind: 'car', logo: L('alektra'), isNew: true,
-    enteredPakistan: 2025,
-    accent: 'from-cyan-500 to-slate-800',
-    tagline: 'Small battery-electric quadricycle introduced in Pakistan in November 2025.',
-    models: [
-      { name: 'Metro', body: 'Hatchback', pt: 'EV', price: 0, year: 2025, status: 'New Arrival', battery: '10 kWh', range: '120 km', launchedAt: '2025-11-27' },
     ],
   },
   {
@@ -70,7 +59,6 @@ export const BRANDS: Brand[] = [
     accent: 'from-fuchsia-700 to-slate-900',
     tagline: 'Changan × Huawei × CATL luxury battery-electric flagships.',
     models: [
-      { name: '11', body: 'SUV', pt: 'EV', price: 0, year: 2025, status: 'New Arrival', battery: '90.4 kWh', range: '555 km', launchedAt: '2025-12-20' },
       { name: '07', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '82 kWh', range: '610 km', launchedAt: '2026-12-01' },
     ],
   },
@@ -534,7 +522,6 @@ export const BRANDS: Brand[] = [
       { name: 'BJ40 Plus 4x4', body: 'SUV', pt: 'Petrol', price: 9499000, year: 2025, status: 'Dealer Stock' },
       { name: 'BJ40 SE', body: 'SUV', pt: 'Petrol', price: 8899000, year: 2025, status: 'Dealer Stock' },
       { name: 'X55 Crossover', body: 'Crossover', pt: 'Petrol', price: 6499000, year: 2025, status: 'Dealer Stock' },
-      { name: 'X55 II', body: 'Crossover', pt: 'Petrol', price: 6899000, year: 2026, status: 'New Arrival' },
       { name: 'X35 1.5', body: 'Crossover', pt: 'Petrol', price: 5299000, year: 2024, status: 'Dealer Stock' },
       { name: 'BJ30 Hybrid', body: 'SUV', pt: 'Hybrid', price: 0, year: 2026, status: 'Expected', battery: '1.8 kWh' },
       { name: 'EU5 Plus Electric', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '55.6 kWh', range: '450 km' },
@@ -573,7 +560,6 @@ export const BRANDS: Brand[] = [
     models: [
       { name: '2008 Active 1.2T', body: 'Crossover', pt: 'Petrol', price: 6999000, year: 2025, status: 'Dealer Stock' },
       { name: '2008 Allure 1.2T', body: 'Crossover', pt: 'Petrol', price: 7699000, year: 2025, status: 'Dealer Stock' },
-      { name: '2008 GT', body: 'Crossover', pt: 'Petrol', price: 8299000, year: 2026, status: 'New Arrival' },
       { name: 'e-2008 Electric', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '54 kWh', range: '406 km' },
       { name: '3008 Hybrid', body: 'SUV', pt: 'Hybrid', price: 0, year: 2026, status: 'Expected', battery: '0.9 kWh' },
       { name: '408 Fastback', body: 'Sedan', pt: 'Petrol', price: 0, year: 2026, status: 'Expected' },
@@ -807,7 +793,6 @@ export const BIKE_BRANDS: Brand[] = [
       { name: 'YBR 125 Café Racer', body: 'Motorcycle', pt: 'Petrol', price: 479900, year: 2026, status: 'New Arrival' },
       { name: 'YZF R15 V4', body: 'Motorcycle', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
       { name: 'MT-15', body: 'Motorcycle', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
-      { name: 'NMAX 155 Scooter', body: 'Scooter', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
     ],
   },
   {
@@ -819,9 +804,7 @@ export const BIKE_BRANDS: Brand[] = [
       { name: 'GS 150', body: 'Motorcycle', pt: 'Petrol', price: 479900, year: 2026, status: 'Dealer Stock' },
       { name: 'GS 150SE', body: 'Motorcycle', pt: 'Petrol', price: 509900, year: 2026, status: 'Dealer Stock' },
       { name: 'GR 150', body: 'Motorcycle', pt: 'Petrol', price: 599900, year: 2026, status: 'Dealer Stock' },
-      { name: 'GSX 125', body: 'Motorcycle', pt: 'Petrol', price: 549900, year: 2026, status: 'New Arrival' },
       { name: 'Inazuma 250', body: 'Motorcycle', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
-      { name: 'Burgman 125 Scooter', body: 'Scooter', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
     ],
   },
   {
@@ -858,45 +841,39 @@ export const BIKE_BRANDS: Brand[] = [
     models: [
       { name: 'JE 70L Electric', body: 'Motorcycle', pt: 'EV', price: 174900, year: 2026, status: 'Available in Pakistan', battery: '1.6 kWh', range: '70 km' },
       { name: 'JE 70 Pro', body: 'Motorcycle', pt: 'EV', price: 199900, year: 2026, status: 'Available in Pakistan', battery: '2.0 kWh', range: '90 km' },
-      { name: 'JE 125 Electric', body: 'Motorcycle', pt: 'EV', price: 249900, year: 2026, status: 'New Arrival', battery: '2.4 kWh', range: '110 km' },
       { name: 'Jolta Scooty E', body: 'Scooter', pt: 'EV', price: 189900, year: 2026, status: 'Available in Pakistan', battery: '1.8 kWh', range: '80 km' },
-      { name: 'Jolta Cargo E-Loader', body: 'Scooter', pt: 'EV', price: 269900, year: 2026, status: 'Coming Soon', battery: '3.0 kWh', range: '100 km' },
     ],
   },
   {
     name: 'Vlektra', slug: 'vlektra', origin: 'Pakistan', kind: 'bike', logo: L('vlektra'),
     accent: 'from-cyan-500 to-teal-800',
-    tagline: 'Smart electric bikes with swappable batteries.',
+    tagline: 'Smart electric bikes and retro scooties with swappable batteries.',
     isNew: true,
     models: [
       { name: 'Bolt Electric', body: 'Motorcycle', pt: 'EV', price: 229900, year: 2026, status: 'Available in Pakistan', battery: '2.3 kWh', range: '100 km' },
-      { name: 'Retro Electric', body: 'Scooter', pt: 'EV', price: 209900, year: 2026, status: 'Available in Pakistan', battery: '2.0 kWh', range: '85 km' },
-      { name: 'Vlektra 125E', body: 'Motorcycle', pt: 'EV', price: 259900, year: 2026, status: 'New Arrival', battery: '2.6 kWh', range: '120 km' },
-      { name: 'Vlektra Swift Scooty', body: 'Scooter', pt: 'EV', price: 194900, year: 2026, status: 'Coming Soon', battery: '1.8 kWh', range: '75 km' },
+      { name: 'Retro Electric', body: 'Scooter', pt: 'EV', price: 279000, year: 2026, status: 'Available in Pakistan', battery: '2.0 kWh', range: '80 km' },
     ],
   },
   {
     name: 'Yadea', slug: 'yadea', origin: 'China', kind: 'bike', logo: L('yadea'),
     accent: 'from-teal-500 to-cyan-800',
-    tagline: 'World’s largest electric two-wheeler maker.',
+    tagline: 'Electric scooties sold across Pakistan — M3, C1S and G5.',
     isNew: true,
     models: [
+      { name: 'Yadea M3', body: 'Scooter', pt: 'EV', price: 174000, year: 2026, status: 'Available in Pakistan', battery: 'Graphene', range: '80 km' },
       { name: 'Yadea C1S Scooter', body: 'Scooter', pt: 'EV', price: 249900, year: 2026, status: 'Available in Pakistan', battery: '2.3 kWh', range: '95 km' },
       { name: 'Yadea G5 Electric', body: 'Scooter', pt: 'EV', price: 299900, year: 2026, status: 'Available in Pakistan', battery: '2.4 kWh', range: '100 km' },
-      { name: 'Yadea T9 Electric', body: 'Scooter', pt: 'EV', price: 329900, year: 2026, status: 'New Arrival', battery: '3.0 kWh', range: '120 km' },
-      { name: 'Yadea KS3 Pro', body: 'Scooter', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '3.2 kWh', range: '130 km' },
-      { name: 'Yadea VFD Electric', body: 'Motorcycle', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '4.0 kWh', range: '150 km' },
     ],
   },
   {
     name: 'Evee', slug: 'evee', origin: 'Pakistan', kind: 'bike', logo: L('evee'),
     accent: 'from-purple-500 to-indigo-800',
-    tagline: 'Premium electric scooters for urban Pakistan.',
+    tagline: 'Pakistan’s popular electric scooty range — Gen-Z, C1 and S1.',
     isNew: true,
     models: [
+      { name: 'Evee Gen-Z', body: 'Scooter', pt: 'EV', price: 177900, year: 2026, status: 'Available in Pakistan', battery: '72V 32Ah', range: '80 km' },
       { name: 'Evee C1 Scooter', body: 'Scooter', pt: 'EV', price: 234900, year: 2026, status: 'Available in Pakistan', battery: '2.1 kWh', range: '85 km' },
-      { name: 'Evee Cargo', body: 'Scooter', pt: 'EV', price: 279900, year: 2026, status: 'Available in Pakistan', battery: '2.9 kWh', range: '95 km' },
-      { name: 'Evee Zenith', body: 'Scooter', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '3.2 kWh', range: '120 km' },
+      { name: 'Evee S1', body: 'Scooter', pt: 'EV', price: 206000, year: 2026, status: 'Available in Pakistan', battery: '72V 36Ah', range: '90 km' },
     ],
   },
   {
@@ -907,7 +884,6 @@ export const BIKE_BRANDS: Brand[] = [
       { name: 'Metro MR 70', body: 'Motorcycle', pt: 'Petrol', price: 124900, year: 2026, status: 'Dealer Stock' },
       { name: 'Metro MR 110', body: 'Motorcycle', pt: 'Petrol', price: 159900, year: 2026, status: 'Dealer Stock' },
       { name: 'Metro MR 125', body: 'Motorcycle', pt: 'Petrol', price: 179900, year: 2026, status: 'Dealer Stock' },
-      { name: 'Metro E-Bike', body: 'Motorcycle', pt: 'EV', price: 169900, year: 2026, status: 'Coming Soon', battery: '1.5 kWh', range: '65 km' },
     ],
   },
   {
@@ -930,17 +906,6 @@ export const BIKE_BRANDS: Brand[] = [
       { name: '250 Duke', body: 'Motorcycle', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
       { name: '390 Duke', body: 'Motorcycle', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
       { name: '390 Adventure', body: 'Motorcycle', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
-    ],
-  },
-  {
-    name: 'Vespa', slug: 'vespa', origin: 'Italy', kind: 'bike', logo: L('vespa'),
-    accent: 'from-teal-500 to-teal-800',
-    tagline: 'Iconic Italian scooters.',
-    models: [
-      { name: 'Vespa Primavera 150', body: 'Scooter', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
-      { name: 'Vespa Sprint 150', body: 'Scooter', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
-      { name: 'Vespa GTS 300', body: 'Scooter', pt: 'Petrol', price: 0, year: 2026, status: 'Imported' },
-      { name: 'Vespa Elettrica', body: 'Scooter', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '4.2 kWh', range: '100 km' },
     ],
   },
   {

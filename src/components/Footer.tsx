@@ -19,8 +19,8 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
     title: 'Bikes',
     links: [
       { label: 'Bikes', href: '/bikes' },
-      { label: 'Electric Bikes', href: '/bikes' },
-      { label: 'Bike Prices', href: '/bikes' },
+      { label: 'Scooties', href: '/scooties' },
+      { label: 'Electric Scooties', href: '/scooties' },
       { label: 'New Bikes 2026', href: '/new-bikes-2026' },
       { label: 'Honda Bikes', href: '/brands/honda-bikes' },
       { label: 'Yamaha Bikes', href: '/brands/yamaha' },
