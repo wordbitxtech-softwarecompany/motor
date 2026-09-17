@@ -18,42 +18,46 @@ const LEGACY_SLUGS = [
   'toyota-fortuner-legender-2025'
 ];
 
+export async function ensureAdminAccount() {
+  const { users } = await import('./schema');
+  const { hashPassword } = await import('@/lib/auth');
+  const adminEmail = (process.env.ADMIN_EMAIL || 'admin@motor.pk').trim().toLowerCase();
+  const adminPass = process.env.ADMIN_PASSWORD || 'MotorAdmin@2026';
+  const adminHash = hashPassword(adminPass);
+  const [adminRow] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, adminEmail))
+    .limit(1);
+  if (!adminRow) {
+    await db.insert(users).values({
+      name: 'MOTOR Admin',
+      email: adminEmail,
+      phone: '+92 300 0000001',
+      city: 'Lahore',
+      passwordHash: adminHash,
+      role: 'admin',
+      status: 'active',
+    });
+    console.log(`Admin account ready: ${adminEmail}`);
+    return { email: adminEmail, created: true };
+  }
+  await db
+    .update(users)
+    .set({
+      passwordHash: adminHash,
+      role: 'admin',
+      status: 'active',
+    })
+    .where(eq(users.id, adminRow.id));
+  console.log(`Admin credentials synced: ${adminEmail}`);
+  return { email: adminEmail, created: false };
+}
+
 export async function seedDatabase() {
   try {
     // Ensure a default admin exists for /admin (Seller Ads + Inventory)
-    const { users } = await import('./schema');
-    const { hashPassword } = await import('@/lib/auth');
-    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@motor.pk').trim().toLowerCase();
-    const adminPass = process.env.ADMIN_PASSWORD || 'MotorAdmin@2026';
-    const adminHash = hashPassword(adminPass);
-    const [adminRow] = await db
-      .select({ id: users.id, role: users.role })
-      .from(users)
-      .where(eq(users.email, adminEmail))
-      .limit(1);
-    if (!adminRow) {
-      await db.insert(users).values({
-        name: 'MOTOR Admin',
-        email: adminEmail,
-        phone: '+92 300 0000001',
-        city: 'Lahore',
-        passwordHash: adminHash,
-        role: 'admin',
-        status: 'active',
-      });
-      console.log(`Admin account ready: ${adminEmail}`);
-    } else {
-      // Keep password/role in sync with env so login works after DB swaps / redeploys
-      await db
-        .update(users)
-        .set({
-          passwordHash: adminHash,
-          role: 'admin',
-          status: 'active',
-        })
-        .where(eq(users.id, adminRow.id));
-      console.log(`Admin credentials synced: ${adminEmail}`);
-    }
+    await ensureAdminAccount();
 
     const rows = await db.select({ slug: vehicles.slug }).from(vehicles);
     const existingSlugs = rows.map((r) => r.slug);

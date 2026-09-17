@@ -20,6 +20,12 @@ export async function POST(req: Request) {
       );
     }
     await ensureDbInitialized();
+    try {
+      const { ensureAdminAccount } = await import('@/db/seed');
+      await ensureAdminAccount();
+    } catch (e) {
+      console.error('ensureAdminAccount failed', e);
+    }
     const { email, password } = await req.json();
     if (!validEmail(email || '') || !password) {
       return NextResponse.json({ error: 'Enter your email and password.' }, { status: 400 });
