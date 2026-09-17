@@ -23,8 +23,9 @@ export async function seedDatabase() {
     // Ensure a default admin exists for /admin (Seller Ads + Inventory)
     const { users } = await import('./schema');
     const { hashPassword } = await import('@/lib/auth');
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@motor.pk';
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@motor.pk').trim().toLowerCase();
     const adminPass = process.env.ADMIN_PASSWORD || 'MotorAdmin@2026';
+    const adminHash = hashPassword(adminPass);
     const [adminRow] = await db
       .select({ id: users.id, role: users.role })
       .from(users)
@@ -36,14 +37,22 @@ export async function seedDatabase() {
         email: adminEmail,
         phone: '+92 300 0000001',
         city: 'Lahore',
-        passwordHash: hashPassword(adminPass),
+        passwordHash: adminHash,
         role: 'admin',
         status: 'active',
       });
       console.log(`Admin account ready: ${adminEmail}`);
-    } else if (adminRow.role !== 'admin') {
-      await db.update(users).set({ role: 'admin' }).where(eq(users.id, adminRow.id));
-      console.log(`Promoted ${adminEmail} to admin`);
+    } else {
+      // Keep password/role in sync with env so login works after DB swaps / redeploys
+      await db
+        .update(users)
+        .set({
+          passwordHash: adminHash,
+          role: 'admin',
+          status: 'active',
+        })
+        .where(eq(users.id, adminRow.id));
+      console.log(`Admin credentials synced: ${adminEmail}`);
     }
 
     const rows = await db.select({ slug: vehicles.slug }).from(vehicles);
