@@ -41,9 +41,9 @@ const POOL: Record<string, string[]> = {
   hatchback: [HATCH.lumin, HATCH.silverMotion, HATCH.whiteUrban, HATCH.red, HATCH.blue, HATCH.blueRear, HATCH.whiteDoors, HATCH.green, HATCH.redClassic],
   utility: [SUV.fortuner, SUV.whiteToyota, SUV.darkRear, SUV.whiteMountain],
   ev: [EV.tesla, EV.suv, EV.hatch, EV.sedan, EV.compact, EV.urban],
-  motorcycle: [BIKE.commuter, BIKE.classic, BIKE.street, BIKE.touring, BIKE.cruiser, BIKE.parked, BIKE.closeup],
-  sportbike: [BIKE.sport, BIKE.naked, BIKE.adventure, BIKE.cafe, BIKE.street],
-  scooter: [BIKE.scooterEv, BIKE.scooter, BIKE.city],
+  motorcycle: [BIKE.commuter, BIKE.classic, BIKE.street, BIKE.touring, BIKE.cruiser, BIKE.parked, BIKE.naked],
+  sportbike: [BIKE.sport, BIKE.naked, BIKE.adventure, BIKE.cafe, BIKE.street, BIKE.touring],
+  scooter: [BIKE.scooterEv, BIKE.scooter, BIKE.city, BIKE.parked, BIKE.classic],
 };
 
 /** Verified model-accurate photography — these always win. */
@@ -127,7 +127,9 @@ export function imageForModel(
     base = poolFor(body);
   }
 
-  const pool = base.filter((i) => !RESERVED.has(i));
+  const pool = (b.includes('scooter') || b.includes('motorcycle'))
+    ? base
+    : base.filter((i) => !RESERVED.has(i));
   if (pool.length === 0) return mediaUrl(FALLBACK_VEHICLE);
 
   const poolKey = `${base[0]}|${pt || body}`;
