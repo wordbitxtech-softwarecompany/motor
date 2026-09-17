@@ -176,6 +176,16 @@ export async function ensureDbInitialized() {
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
         );
 
+        CREATE TABLE IF NOT EXISTS phone_otps (
+          id SERIAL PRIMARY KEY,
+          phone VARCHAR(40) NOT NULL,
+          code_hash VARCHAR(128) NOT NULL,
+          expires_at TIMESTAMP NOT NULL,
+          attempts INTEGER DEFAULT 0 NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS phone_otps_phone_idx ON phone_otps(phone);
+
         CREATE TABLE IF NOT EXISTS listings (
           id SERIAL PRIMARY KEY,
           reference VARCHAR(40) NOT NULL UNIQUE,

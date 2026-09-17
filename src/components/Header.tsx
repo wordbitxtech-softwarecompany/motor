@@ -111,14 +111,19 @@ export default function Header() {
       <header className="sticky top-0 z-40 bg-white/92 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_10px_40px_rgba(15,23,42,0.06)] before:absolute before:inset-x-0 before:top-0 before:h-[2px] before:bg-gradient-to-r before:from-amber-700 before:via-amber-400 before:to-teal-700 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 lg:gap-8 h-[72px]">
-            <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="MOTOR Pakistan — Home">
+            <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="MOTOR | Pak — Home">
               <span className="relative w-11 h-11 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow-[0_8px_24px_rgba(15,23,42,0.28)]">
                 <span className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-amber-400/40" aria-hidden="true" />
                 <span className="font-black text-lg tracking-tighter leading-none">M</span>
               </span>
               <span className="leading-none">
-                <span className="block text-[22px] font-black tracking-[-0.04em] text-slate-950">MOTOR</span>
-                <span className="block text-[9px] font-bold tracking-[0.38em] text-amber-700 mt-1">PAKISTAN</span>
+                <span className="flex items-baseline gap-1.5">
+                  <span className="text-[22px] font-black tracking-[-0.04em] text-slate-950">MOTOR</span>
+                  <span className="text-[12px] font-semibold text-slate-500 tracking-tight">| Pak</span>
+                </span>
+                <span className="block text-[9px] font-semibold tracking-[0.12em] text-slate-500 mt-1">
+                  WordbitX group of companies
+                </span>
               </span>
             </Link>
 

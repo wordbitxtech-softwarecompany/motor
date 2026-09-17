@@ -14,15 +14,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: '/' },
   title: {
-    default: 'MOTOR Pakistan | Cars, Bikes, Prices, EVs & Hybrids 2026',
-    template: '%s | MOTOR Pakistan',
+    default: 'MOTOR | Pak | Cars, Bikes, Scooties, EVs 2026',
+    template: '%s | MOTOR | Pak',
   },
   description:
-    'Explore cars, bikes, SUVs, EVs and hybrid vehicles in Pakistan. Check latest prices, specifications, brands, models, comparisons and new 2026 launches on MOTOR.',
-  applicationName: 'MOTOR Pakistan',
-  authors: [{ name: 'MOTOR Pakistan' }],
-  creator: 'MOTOR Pakistan',
-  publisher: 'MOTOR Pakistan',
+    'Explore cars, bikes, scooties, SUVs, EVs and hybrids in Pakistan. Prices, specs and 2026 launches on MOTOR | Pak — WordbitX group of companies.',
+  applicationName: 'MOTOR | Pak',
+  authors: [{ name: 'MOTOR | Pak', url: SITE_URL }],
+  creator: 'WordbitX group of companies',
+  publisher: 'WordbitX group of companies',
   category: 'Automotive',
   keywords: [
     'cars in Pakistan',
@@ -50,11 +50,11 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_PK',
     url: SITE_URL,
-    siteName: 'MOTOR Pakistan',
-    title: 'MOTOR Pakistan | Cars, Bikes, Prices, EVs & Hybrids 2026',
+    siteName: 'MOTOR | Pak',
+    title: 'MOTOR | Pak | Cars, Bikes, Scooties, EVs 2026',
     description:
-      'Cars, bikes, SUVs, EVs and hybrids in Pakistan — latest prices, specifications, brands, models and 2026 launches.',
-    images: [{ url: HERO.showroom, width: 1200, height: 630, alt: 'MOTOR Pakistan — cars and bikes marketplace' }],
+      'Cars, bikes, scooties, SUVs, EVs and hybrids in Pakistan — MOTOR | Pak by WordbitX group of companies.',
+    images: [{ url: HERO.showroom, width: 1200, height: 630, alt: 'MOTOR | Pak — cars and bikes marketplace' }],
   },
   twitter: {
     card: 'summary_large_image',

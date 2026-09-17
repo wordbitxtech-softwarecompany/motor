@@ -162,6 +162,16 @@ export const sessions = pgTable('sessions', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+/** One-time SMS codes for phone login / signup. */
+export const phoneOtps = pgTable('phone_otps', {
+  id: serial('id').primaryKey(),
+  phone: varchar('phone', { length: 40 }).notNull(),
+  codeHash: varchar('code_hash', { length: 128 }).notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  attempts: integer('attempts').default(0).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export const listings = pgTable('listings', {
   id: serial('id').primaryKey(),
   reference: varchar('reference', { length: 40 }).notNull().unique(),

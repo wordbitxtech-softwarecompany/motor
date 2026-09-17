@@ -20,6 +20,32 @@ const LEGACY_SLUGS = [
 
 export async function seedDatabase() {
   try {
+    // Ensure a default admin exists for /admin (Seller Ads + Inventory)
+    const { users } = await import('./schema');
+    const { hashPassword } = await import('@/lib/auth');
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@motor.pk';
+    const adminPass = process.env.ADMIN_PASSWORD || 'MotorAdmin@2026';
+    const [adminRow] = await db
+      .select({ id: users.id, role: users.role })
+      .from(users)
+      .where(eq(users.email, adminEmail))
+      .limit(1);
+    if (!adminRow) {
+      await db.insert(users).values({
+        name: 'MOTOR Admin',
+        email: adminEmail,
+        phone: '+92 300 0000001',
+        city: 'Lahore',
+        passwordHash: hashPassword(adminPass),
+        role: 'admin',
+        status: 'active',
+      });
+      console.log(`Admin account ready: ${adminEmail}`);
+    } else if (adminRow.role !== 'admin') {
+      await db.update(users).set({ role: 'admin' }).where(eq(users.id, adminRow.id));
+      console.log(`Promoted ${adminEmail} to admin`);
+    }
+
     const rows = await db.select({ slug: vehicles.slug }).from(vehicles);
     const existingSlugs = rows.map((r) => r.slug);
 

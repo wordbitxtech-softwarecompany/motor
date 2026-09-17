@@ -50,7 +50,7 @@ export default function AdminDashboard({
   initialOffers: any[];
   initialAds?: any[];
 }) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'ads' | 'inventory' | 'rentals' | 'crm' | 'test-drives' | 'offers'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'ads' | 'inventory' | 'rentals' | 'crm' | 'test-drives' | 'offers'>('ads');
 
   // Local state for interactive updates
   const [vehiclesList, setVehiclesList] = useState(initialVehicles);
@@ -576,6 +576,9 @@ export default function AdminDashboard({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h1 className="text-2xl font-black text-white tracking-tight">Vehicle Inventory Management</h1>
+                  <p className="text-xs text-slate-400 mt-1">
+                    All showroom / rental vehicles are controlled here — add, edit status, feature or remove. Seller marketplace ads are moderated under Seller Ads.
+                  </p>
                   <p className="text-xs text-slate-400 mt-0.5">
                     Add, edit, change status, set pricing, or mark vehicles sold or reserved.
                   </p>

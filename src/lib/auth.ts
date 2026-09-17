@@ -9,6 +9,21 @@ import { ensureDbInitialized } from '@/db/init';
 export const SESSION_COOKIE = 'motor_session';
 const SESSION_DAYS = 30;
 
+/** HttpOnly session cookie — secure only on HTTPS so localhost signup works. */
+export function sessionCookieOptions(maxAge = SESSION_DAYS * 86400) {
+  const secure =
+    process.env.COOKIE_SECURE === 'true' ||
+    process.env.VERCEL === '1' ||
+    process.env.NODE_ENV === 'production';
+  return {
+    httpOnly: true as const,
+    sameSite: 'lax' as const,
+    path: '/',
+    secure,
+    maxAge,
+  };
+}
+
 /* ── Password hashing (scrypt, salted) ───────────────── */
 
 export function hashPassword(password: string): string {

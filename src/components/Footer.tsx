@@ -94,13 +94,18 @@ export default function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Brand */}
           <div className="lg:col-span-3 space-y-4">
-            <Link href="/" className="flex items-center gap-2.5" aria-label="MOTOR Pakistan — Home">
+            <Link href="/" className="flex items-center gap-2.5" aria-label="MOTOR | Pak — Home">
               <span className="w-9 h-9 rounded-lg bg-white text-slate-950 flex items-center justify-center shrink-0" aria-hidden="true">
                 <span className="font-black text-lg tracking-tighter leading-none">M</span>
               </span>
               <span className="leading-none">
-                <span className="block text-xl font-black tracking-[-0.02em] text-white">MOTOR</span>
-                <span className="block text-[9px] font-bold tracking-[0.3em] text-slate-500 mt-0.5">PAKISTAN</span>
+                <span className="flex items-baseline gap-1.5">
+                  <span className="text-xl font-black tracking-[-0.02em] text-white">MOTOR</span>
+                  <span className="text-[11px] font-semibold text-slate-400">| Pak</span>
+                </span>
+                <span className="block text-[9px] font-semibold tracking-[0.12em] text-slate-500 mt-1">
+                  WordbitX group of companies
+                </span>
               </span>
             </Link>
 
@@ -157,10 +162,10 @@ export default function Footer() {
             className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-slate-900 ring-1 ring-white/10 px-5 py-5 hover:ring-emerald-400/40 transition-colors"
           >
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-emerald-400">Technology by</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-emerald-400">WordbitX group of companies</p>
               <p className="text-2xl font-black text-white tracking-tight mt-1">WordbitX</p>
               <p className="text-xs text-slate-400 mt-1.5 max-w-md">
-                Product, engineering and digital infrastructure behind MOTOR Pakistan.
+                Product, engineering and digital infrastructure behind MOTOR | Pak.
               </p>
             </div>
             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-white shrink-0">
@@ -184,7 +189,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="mt-8 pt-6 border-t border-slate-800/70 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-slate-500">
-          <p>© {year} MOTOR Pakistan. All rights reserved.</p>
+          <p>© {year} MOTOR | Pak · WordbitX group of companies. All rights reserved.</p>
           <p className="flex items-center gap-1.5">
             Technology by
             <a
