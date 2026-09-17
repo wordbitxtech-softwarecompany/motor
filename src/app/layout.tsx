@@ -67,7 +67,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#020617',
+  themeColor: '#ffffff',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -77,7 +77,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <SchemaJsonLd schema={organizationSchema()} />
         <SchemaJsonLd schema={websiteSchema()} />
       </head>
-      <body className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased selection:bg-indigo-600 selection:text-white">
+      <body className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased selection:bg-teal-600 selection:text-white">
         <LanguageProvider>
           <Header />
           <main id="main-content" className="flex-1 pb-16 lg:pb-0">{children}</main>

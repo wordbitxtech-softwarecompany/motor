@@ -73,6 +73,7 @@ for (const file of sourceFiles) {
   for (const m of text.matchAll(LOCAL_RE)) {
     const p = m[1];
     if (p.includes('${')) continue; // dynamic path — resolved separately below
+    if (p.startsWith('/media/')) continue; // same-origin CDN proxy, not a public file
 
     // Skip object KEYS (legacy-path lookup tables map these away, they are not
     // live references). A key is followed by a colon: '/old/path.jpg': NEW

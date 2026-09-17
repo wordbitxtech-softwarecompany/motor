@@ -13,6 +13,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import HeroSection from '@/components/HeroSection';
+import CategoryStrip from '@/components/CategoryStrip';
 import SellCarSection from '@/components/SellCarSection';
 import LatestCarsSection from '@/components/LatestCarsSection';
 import NewEnergyVehicleHub from '@/components/NewEnergyVehicleHub';
@@ -28,6 +29,7 @@ import LaunchGrid from '@/components/LaunchGrid';
 import type { Metadata } from 'next';
 import { buildMetadata, faqSchema } from '@/lib/seo';
 import SchemaJsonLd from '@/components/SchemaJsonLd';
+import { SCENE, mediaUrl } from '@/lib/media';
 import { formatPKR } from '@/lib/utils';
 
 export const metadata: Metadata = buildMetadata({
@@ -68,11 +70,24 @@ export default async function HomePage() {
   const allVehicles = await getAllVehicles();
   const rentalCars = await getRentalVehicles();
 
-  const featuredBikes = BIKE_BRANDS.flatMap((b) =>
-    b.models.map((m) => ({ ...m, brand: b.name }))
-  )
-    .filter((m) => m.pt === 'EV')
-    .slice(0, 4);
+  const featuredBikePicks = [
+    { brand: 'Honda', name: 'CD 70' },
+    { brand: 'Yamaha', name: 'YBR 125' },
+    { brand: 'Honda', name: 'CB 150F' },
+    { brand: 'Kawasaki', name: 'Ninja 400' },
+    { brand: 'Yadea', name: 'Yadea C1S Scooter' },
+    { brand: 'Jolta Electric', name: 'JE 70L Electric' },
+    { brand: 'Evee', name: 'Evee C1 Scooter' },
+    { brand: 'Vespa', name: 'Vespa Primavera 150' },
+  ];
+  const featuredBikes = featuredBikePicks
+    .map((pick) => {
+      const brand = BIKE_BRANDS.find((b) => b.name === pick.brand);
+      const model = brand?.models.find((m) => m.name === pick.name);
+      if (!brand || !model) return null;
+      return { ...model, brand: brand.name, brandSlug: brand.slug };
+    })
+    .filter((m): m is NonNullable<typeof m> => Boolean(m));
 
   const launches2026 = launchesFor(2026, 'car').slice(0, 8);
   const toyotaModels = familiesForBrand('toyota').filter((f) => f.priceMin > 0).slice(0, 6);
@@ -90,8 +105,7 @@ export default async function HomePage() {
       <SchemaJsonLd schema={faqSchema(HOME_FAQS)} />
       {/* 01 — Hero: luxury showroom backdrop + unified search with live Urdu */}
       <HeroSection />
-
-      {/* 01b — Sell your car with instant Auth Modal & registration */}
+      <CategoryStrip />
       <SellCarSection />
 
       {/* 02b — New brand launches strip (priority for 2026 entrants) */}
@@ -367,7 +381,7 @@ export default async function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {featuredBikes.map((m, i) => (
-            <ModelCard key={`${m.brand}-${m.name}`} model={m} brandName={m.brand} index={i} />
+            <ModelCard key={`${m.brand}-${m.name}`} model={m} brandName={m.brand} brandSlug={m.brandSlug} index={i} />
           ))}
         </div>
       </section>
@@ -496,26 +510,25 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/cars-in-lahore" className="group p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-teal-500 hover:shadow-md transition-all">
-              <MapPin className="w-5 h-5 text-teal-600 mb-3" />
-              <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-700 transition-colors">Lahore</h3>
-              <p className="text-xs text-slate-500 mt-1">Gulberg, DHA & Johar Town hubs</p>
-            </Link>
-            <Link href="/cars-in-islamabad" className="group p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-teal-500 hover:shadow-md transition-all">
-              <MapPin className="w-5 h-5 text-teal-600 mb-3" />
-              <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-700 transition-colors">Islamabad</h3>
-              <p className="text-xs text-slate-500 mt-1">Blue Area & F-7 hub</p>
-            </Link>
-            <Link href="/cars-in-karachi" className="group p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-teal-500 hover:shadow-md transition-all">
-              <MapPin className="w-5 h-5 text-teal-600 mb-3" />
-              <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-700 transition-colors">Karachi</h3>
-              <p className="text-xs text-slate-500 mt-1">Clifton & DHA hub</p>
-            </Link>
-            <Link href="/contact" className="group p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-teal-500 hover:shadow-md transition-all">
-              <MapPin className="w-5 h-5 text-teal-600 mb-3" />
-              <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-700 transition-colors">More Cities</h3>
-              <p className="text-xs text-slate-500 mt-1">Rawalpindi, Faisalabad, Multan & more</p>
-            </Link>
+            {[
+              { href: '/cars-in-lahore', city: 'Lahore', note: 'Gulberg, DHA & Johar Town hubs', img: SCENE.lahore },
+              { href: '/cars-in-islamabad', city: 'Islamabad', note: 'Blue Area & F-7 hub', img: SCENE.islamabad },
+              { href: '/cars-in-karachi', city: 'Karachi', note: 'Clifton & DHA hub', img: SCENE.karachi },
+              { href: '/contact', city: 'More Cities', note: 'Rawalpindi, Faisalabad, Multan & more', img: SCENE.usedCars },
+            ].map((c) => (
+              <Link key={c.href} href={c.href} className="group rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 hover:border-teal-500 hover:shadow-md transition-all">
+                <span className="block aspect-[16/9] overflow-hidden bg-slate-100">
+                  <img src={mediaUrl(c.img)} alt={`Cars in ${c.city}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                </span>
+                <span className="block p-4">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-teal-600" />
+                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-700 transition-colors">{c.city}</h3>
+                  </span>
+                  <p className="text-xs text-slate-500 mt-1">{c.note}</p>
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

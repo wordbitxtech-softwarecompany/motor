@@ -4,7 +4,7 @@
  * available or expected in the Pakistani market. Prices are indicative PKR.
  */
 
-import { SEDAN, SUV, CROSSOVER, HATCH, BIKE, FALLBACK_VEHICLE } from './media';
+import { SEDAN, SUV, CROSSOVER, HATCH, BIKE, EV, FALLBACK_VEHICLE, mediaUrl } from './media';
 
 export type VehicleKind = 'car' | 'bike';
 
@@ -35,14 +35,16 @@ export interface Brand {
 
 /** Body-specific photo pools so different models never share one picture. */
 const POOL: Record<string, string[]> = {
-  sedan: [SEDAN.corolla, SEDAN.civic, SEDAN.yaris, SEDAN.dark, SEDAN.silverLux, SEDAN.silverPergola, SEDAN.whiteSunset, SEDAN.silverMotion],
+  sedan: [SEDAN.corolla, SEDAN.civic, SEDAN.yaris, SEDAN.dark, SEDAN.silverLux, SEDAN.silverPergola, SEDAN.whiteSunset, SEDAN.silverMotion, SEDAN.roadBmw, SEDAN.whiteSport, SEDAN.audi, SEDAN.mercedes],
   suv: [SUV.sportage, SUV.fortuner, SUV.whiteSunset, SUV.whiteUrban, SUV.whiteToyota, SUV.whiteStreet, SUV.whiteMountain, SUV.whiteNature, SUV.darkRear, SUV.silverShowroom],
   crossover: [CROSSOVER.corollaCross, CROSSOVER.mgHs, CROSSOVER.deepalS07, SUV.whiteStreet, SUV.silverShowroom, SUV.whiteUrban],
   hatchback: [HATCH.lumin, HATCH.silverMotion, HATCH.whiteUrban, HATCH.red, HATCH.blue, HATCH.blueRear, HATCH.whiteDoors, HATCH.green, HATCH.redClassic],
   utility: [SUV.fortuner, SUV.whiteToyota, SUV.darkRear, SUV.whiteMountain],
+  ev: [EV.tesla, EV.suv, EV.hatch, EV.sedan, EV.compact, EV.urban],
+  motorcycle: [BIKE.commuter, BIKE.classic, BIKE.street, BIKE.touring, BIKE.cruiser, BIKE.parked, BIKE.closeup],
+  sportbike: [BIKE.sport, BIKE.naked, BIKE.adventure, BIKE.cafe, BIKE.street],
+  scooter: [BIKE.scooterEv, BIKE.scooter, BIKE.city],
 };
-
-const BIKE_IMG = BIKE;
 
 /** Verified model-accurate photography — these always win. */
 const EXACT: Record<string, string> = {
@@ -55,6 +57,15 @@ const EXACT: Record<string, string> = {
   'mg hs': CROSSOVER.mgHs,
   'changan lumin': HATCH.lumin,
   'deepal s07': CROSSOVER.deepalS07,
+  'honda cd 70': BIKE.commuter,
+  'honda cg 125': BIKE.classic,
+  'yamaha ybr 125': BIKE.street,
+  'yamaha yzf r15': BIKE.sport,
+  'kawasaki ninja': BIKE.sport,
+  'ktm 200 duke': BIKE.naked,
+  'yadea c1s': BIKE.scooterEv,
+  'evee c1': BIKE.scooter,
+  'vespa primavera': BIKE.city,
 };
 
 /** Images reserved by EXACT so the round-robin pool never reuses them. */
@@ -92,37 +103,41 @@ export function imageForModel(
 ): string {
   const b = body.toLowerCase();
 
-  // Two-wheelers use dedicated inline illustrations
-  if (b.includes('scooter')) return pt === 'EV' ? BIKE_IMG.scooterEv : BIKE_IMG.commuter;
-  if (b.includes('motorcycle')) {
-    if (pt === 'EV') return BIKE_IMG.scooterEv;
-    const m = (model || '').toLowerCase();
-    const sporty = /cb |cbr|ninja|duke|r15|mt-|gr |gsx|tnt|leoncino|trk|zx|adventure|250|400|650/.test(m);
-    return sporty ? BIKE_IMG.sport : BIKE_IMG.commuter;
-  }
-
   if (brand && model) {
     const full = `${brand} ${model}`.toLowerCase();
     for (const k of Object.keys(EXACT)) {
-      if (full.startsWith(k)) return EXACT[k];
+      if (full.startsWith(k)) return mediaUrl(EXACT[k]);
     }
   }
 
-  const key = `${brand || ''}|${model || ''}|${body}`;
+  const key = `${brand || ''}|${model || ''}|${body}|${pt || ''}`;
   const cached = assigned.get(key);
   if (cached) return cached;
 
-  const base = poolFor(body);
-  const pool = base.filter((i) => !RESERVED.has(i));
-  if (pool.length === 0) return FALLBACK_VEHICLE;
+  let base: string[];
+  if (b.includes('scooter')) {
+    base = POOL.scooter;
+  } else if (b.includes('motorcycle')) {
+    const m = (model || '').toLowerCase();
+    const sporty = /cb |cbr|ninja|duke|r15|mt-|gr |gsx|tnt|leoncino|trk|zx|adventure|250|400|650/.test(m);
+    base = pt === 'EV' ? POOL.scooter : sporty ? POOL.sportbike : POOL.motorcycle;
+  } else if (pt === 'EV' || pt === 'PHEV' || pt === 'REEV') {
+    base = POOL.ev;
+  } else {
+    base = poolFor(body);
+  }
 
-  const poolKey = base[0];
-  if (cursor[poolKey] === undefined) cursor[poolKey] = hash(poolKey) % pool.length;
+  const pool = base.filter((i) => !RESERVED.has(i));
+  if (pool.length === 0) return mediaUrl(FALLBACK_VEHICLE);
+
+  const poolKey = `${base[0]}|${pt || body}`;
+  if (cursor[poolKey] === undefined) cursor[poolKey] = (hash(key) + index) % pool.length;
   const pick = pool[cursor[poolKey] % pool.length];
   cursor[poolKey] = (cursor[poolKey] + 1) % pool.length;
 
-  assigned.set(key, pick);
-  return pick;
+  const resolved = mediaUrl(pick);
+  assigned.set(key, resolved);
+  return resolved;
 }
 
 /** Every brand mark is a text-based SVG so it always deploys. */

@@ -45,7 +45,12 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        // Long-lived caching for immutable brand/vehicle imagery
+        source: "/media/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, s-maxage=2592000" },
+        ],
+      },
+      {
         source: "/images/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },

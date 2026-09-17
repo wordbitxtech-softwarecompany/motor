@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, ChevronRight, Car, Bike } from 'lucide-react';
+import { Search, Car, Bike } from 'lucide-react';
 import { searchModels, type SearchHit } from '@/lib/catalog';
 import { useLanguage } from './LanguageContext';
 
@@ -18,7 +18,13 @@ const PRICE_BANDS = [
 ];
 
 /** Hero search bar: model autocomplete + city + price, styled as one unified control. */
-export default function HeroSearch() {
+export default function HeroSearch({
+  destination = '/used-cars',
+  stacked = false,
+}: {
+  destination?: string;
+  stacked?: boolean;
+}) {
   const router = useRouter();
   const { t } = useLanguage();
   const [q, setQ] = useState('');
@@ -44,7 +50,7 @@ export default function HeroSearch() {
     if (q.trim()) p.set('q', q.trim());
     if (city) p.set('city', city);
     if (price) p.set('price', price);
-    router.push(`/used-cars?${p.toString()}`);
+    router.push(`${destination}?${p.toString()}`);
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -59,7 +65,9 @@ export default function HeroSearch() {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-stretch gap-2 md:gap-0 md:rounded-xl md:overflow-hidden md:shadow-2xl">
+      <div className={`flex flex-col md:flex-row md:items-stretch gap-2 md:gap-0 md:overflow-hidden md:shadow-2xl ${
+        stacked ? 'md:rounded-b-2xl md:rounded-tr-2xl bg-white p-2 md:p-0' : 'md:rounded-xl'
+      }`}>
         {/* Model / make input */}
         <div ref={boxRef} className="relative flex-1 md:flex-[1.4]">
           <label htmlFor="hero-q" className="sr-only">{t('hero.makeOrModel', 'Car Make or Model')}</label>
@@ -143,7 +151,7 @@ export default function HeroSearch() {
         {/* Submit */}
         <button
           type="button" onClick={runSearch} aria-label={t('hero.searchCars', 'Search Cars')}
-          className="h-14 px-8 md:px-7 bg-teal-600 hover:bg-teal-500 text-white font-bold text-[15px] rounded-xl md:rounded-none transition-colors inline-flex items-center justify-center gap-2 cursor-pointer shadow-md"
+          className="h-14 px-8 md:px-7 bg-[#c8102e] hover:bg-[#a50d25] text-white font-bold text-[15px] rounded-xl md:rounded-none transition-colors inline-flex items-center justify-center gap-2 cursor-pointer shadow-md"
         >
           <Search className="w-5 h-5" aria-hidden="true" />
           <span className="md:hidden">{t('hero.searchCars', 'Search Cars')}</span>
@@ -153,8 +161,8 @@ export default function HeroSearch() {
       {/* Find more button */}
       <div className="mt-6 text-center">
         <a
-          href="/used-cars"
-          className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg border border-white/35 text-white text-[13px] font-semibold hover:bg-white/10 transition-colors shadow-sm"
+          href={destination}
+          className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg border border-white/50 bg-white/15 text-white text-[13px] font-semibold hover:bg-white/25 transition-colors shadow-sm backdrop-blur-sm"
         >
           {t('hero.findMore', 'Find More ›')}
         </a>

@@ -1,15 +1,12 @@
 /**
  * MOTOR Pakistan — central media registry.
  *
- * WHY THIS EXISTS
- * ---------------
- * Binary assets (.jpg/.png) placed in `public/` were not surviving the
- * deployment pipeline, so every photo 404'd in production while text assets
- * (.svg) served fine. Every photographic asset is therefore resolved from a
- * CDN URL declared here in code, which always deploys with the source.
+ * Photographic assets are CDN URLs (Pexels, licensed for commercial use).
+ * We do not scrape PakWheels listing photos. Runtime serving goes through
+ * `/media/pexels` so images load reliably in Pakistan.
  *
- * Local copies remain in `public/images/**` and are still valid; this module
- * is simply the single source of truth so one edit updates the whole site.
+ * Local copies remain in `public/images/**` (SVG marks only); this module
+ * is the single source of truth for photography.
  */
 
 const PX = 'https://images.pexels.com/photos';
@@ -19,15 +16,29 @@ function px(id: number, w = 1200, h = 750): string {
   return `${PX}/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=${w}&h=${h}`;
 }
 
+/** Neutral fallback used if any image fails to load at runtime. */
+export const FALLBACK_VEHICLE = px(170811);
+
+/** Same-origin proxy so Pexels hotlinks work in Pakistan. */
+export function mediaUrl(src?: string | null): string {
+  const raw = src || FALLBACK_VEHICLE;
+  if (raw.startsWith('https://images.pexels.com')) {
+    return raw.replace('https://images.pexels.com', '/media/pexels');
+  }
+  return raw;
+}
+
 /* ── Hero / showroom ─────────────────────────────────── */
 
 export const HERO = {
-  /** Primary homepage hero — premium showroom interior. */
-  showroom: px(29566879, 2000, 1100),
-  /** Secondary showroom angle. */
-  showroomAlt: px(29566880, 2000, 1100),
-  /** Urban dealership scene used by some landing pages. */
-  cityscape: px(18108314, 1800, 1000),
+  /** Primary homepage hero — bright outdoor luxury car (not a dark showroom). */
+  showroom: px(1545743, 2000, 1100),
+  /** Secondary outdoor angle. */
+  showroomAlt: px(3802510, 2000, 1100),
+  /** Daylight road scene used by some landing pages. */
+  cityscape: px(170811, 1800, 1000),
+  /** Motorcycle hero. */
+  bikes: px(2116475, 1800, 1000),
 } as const;
 
 /* ── Vehicle photography pools ───────────────────────── */
@@ -41,6 +52,10 @@ export const SEDAN = {
   silverPergola: px(33359730),
   whiteSunset: px(19868900),
   silverMotion: px(19868899),
+  roadBmw: px(170811),
+  whiteSport: px(1545743),
+  audi: px(909907),
+  mercedes: px(112460),
 } as const;
 
 export const SUV = {
@@ -74,16 +89,45 @@ export const HATCH = {
   redClassic: px(36569947),
 } as const;
 
-/* ── Two-wheeler illustrations (local SVG — text-safe) ─ */
-
-export const BIKE = {
-  commuter: '/images/vehicles/bike-commuter.svg',
-  sport: '/images/vehicles/bike-sport.svg',
-  scooterEv: '/images/vehicles/scooter-electric.svg',
+export const EV = {
+  tesla: px(3729464),
+  compact: px(116675),
+  hatch: px(12310882),
+  suv: px(8983368),
+  sedan: px(210019),
+  urban: px(1402787),
 } as const;
 
-/** Neutral fallback used if any image fails to load at runtime. */
-export const FALLBACK_VEHICLE = px(18108314);
+/* ── Two-wheeler photography (real motorcycles / scooters) ─ */
+
+export const BIKE = {
+  commuter: px(2116475),
+  sport: px(2393816),
+  scooterEv: px(1119790),
+  scooter: px(1595108),
+  cruiser: px(1413412),
+  adventure: px(2519374),
+  naked: px(595807),
+  city: px(1149831),
+  classic: px(258092),
+  touring: px(1715193),
+  cafe: px(919073),
+  street: px(244206),
+  closeup: px(707046),
+  parked: px(193021),
+} as const;
+
+export const SCENE = {
+  usedCars: px(170811, 800, 520),
+  newCars: px(3802510, 800, 520),
+  bikes: px(2116475, 800, 520),
+  ev: px(3729464, 800, 520),
+  rent: px(112460, 800, 520),
+  sell: px(1592384, 800, 520),
+  lahore: px(18108314, 900, 600),
+  islamabad: px(1402787, 900, 600),
+  karachi: px(1592384, 900, 600),
+} as const;
 
 /** Remote hosts that must be allowed in next.config.ts remotePatterns. */
 export const REMOTE_IMAGE_HOSTS = ['images.pexels.com'] as const;
@@ -110,6 +154,9 @@ const LEGACY: Record<string, string> = {
   '/images/showroom-hero.jpg': HERO.showroom,
   '/images/showroom-hero-alt.jpg': HERO.showroomAlt,
   '/images/hero-lahore.jpg': HERO.cityscape,
+  '/images/vehicles/bike-commuter.svg': BIKE.commuter,
+  '/images/vehicles/bike-sport.svg': BIKE.sport,
+  '/images/vehicles/scooter-electric.svg': BIKE.scooterEv,
 };
 
 /**
@@ -117,15 +164,15 @@ const LEGACY: Record<string, string> = {
  * Accepts CDN URLs, user-uploaded data URIs, local SVGs and legacy paths.
  */
 export function resolveImage(src?: string | null): string {
-  if (!src) return FALLBACK_VEHICLE;
-  if (LEGACY[src]) return LEGACY[src];
+  if (!src) return mediaUrl(FALLBACK_VEHICLE);
+  if (LEGACY[src]) return mediaUrl(LEGACY[src]);
   // Any other legacy raster path in /images/ no longer ships — use fallback.
-  if (/^\/images\/.+\.(jpe?g|png|webp|avif)$/i.test(src)) return FALLBACK_VEHICLE;
-  return src;
+  if (/^\/images\/.+\.(jpe?g|png|webp|avif)$/i.test(src)) return mediaUrl(FALLBACK_VEHICLE);
+  return mediaUrl(src);
 }
 
 /** Resolve an array of stored images (gallery fields). */
 export function resolveGallery(list?: string[] | null): string[] {
-  if (!list?.length) return [FALLBACK_VEHICLE];
+  if (!list?.length) return [mediaUrl(FALLBACK_VEHICLE)];
   return list.map(resolveImage);
 }

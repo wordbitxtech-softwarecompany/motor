@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FALLBACK_VEHICLE } from '@/lib/media';
+import { FALLBACK_VEHICLE, mediaUrl } from '@/lib/media';
 
 /**
  * Vehicle/photo <img> with a guaranteed fallback.
@@ -26,7 +26,8 @@ export default function VehicleImage({
   loading?: 'lazy' | 'eager';
   fetchPriority?: 'high' | 'low' | 'auto';
 }) {
-  const [current, setCurrent] = useState(src);
+  const fallback = mediaUrl(FALLBACK_VEHICLE);
+  const [current, setCurrent] = useState(mediaUrl(src));
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
@@ -40,7 +41,7 @@ export default function VehicleImage({
       fetchPriority={fetchPriority}
       decoding="async"
       onError={() => {
-        if (current !== FALLBACK_VEHICLE) setCurrent(FALLBACK_VEHICLE);
+        if (current !== fallback) setCurrent(fallback);
       }}
     />
   );

@@ -5,6 +5,7 @@ import { BIKE_BRANDS } from '@/lib/brands-data';
 import BikeBrandExplorer from '@/components/BikeBrandExplorer';
 import SchemaJsonLd from '@/components/SchemaJsonLd';
 import { Bike, Zap, ArrowRight, BatteryCharging } from 'lucide-react';
+import { HERO, mediaUrl } from '@/lib/media';
 
 export const metadata: Metadata = {
   title: 'Bikes in Pakistan | Prices & Models 2026',
@@ -63,33 +64,33 @@ export default function BikesPage() {
     <div className="bg-slate-50 min-h-screen">
       <SchemaJsonLd schema={faq} />
 
-      {/* Hero — matches header theme */}
-      <section className="relative bg-slate-950 text-white overflow-hidden">
-        <div className="pointer-events-none absolute -top-24 right-1/4 w-[520px] h-[520px] rounded-full bg-teal-500/10 blur-3xl" />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '64px 64px' }}
-          aria-hidden="true"
-        />
+      <section className="relative bg-slate-900 text-white overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={mediaUrl(HERO.bikes)}
+            alt="Motorcycles and electric scooters in Pakistan"
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/60 via-slate-950/30 to-slate-950/15" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/45 via-transparent to-slate-950/20" />
+        </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-4">
-          <span className="inline-flex items-center px-3 py-1 rounded-full bg-teal-500/15 text-teal-300 border border-teal-500/30 text-[11px] font-bold uppercase tracking-[0.18em]">
+          <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/90 text-slate-800 text-[11px] font-bold uppercase tracking-[0.18em]">
             <Bike className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
             Two Wheelers
           </span>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight max-w-3xl">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight max-w-3xl drop-shadow">
             Bikes &amp; Electric Scooties{' '}
-            <span className="block bg-gradient-to-r from-white via-teal-100 to-teal-400 bg-clip-text text-transparent">
-              in Pakistan
-            </span>
+            <span className="block text-white">in Pakistan</span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base text-white/90 max-w-2xl leading-relaxed">
             From Pakistan&apos;s best-selling commuters to the new generation of electric bikes and
             scooties — compare {allModels.length} models with PKR prices, battery capacity and range.
           </p>
-          <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2 text-xs text-slate-400">
-            <span className="flex items-center"><Zap className="w-4 h-4 mr-1.5 text-teal-400" aria-hidden="true" /> {electric.length} electric models</span>
-            <span className="flex items-center"><Bike className="w-4 h-4 mr-1.5 text-teal-400" aria-hidden="true" /> {BIKE_BRANDS.length} brands</span>
-            <span className="flex items-center"><BatteryCharging className="w-4 h-4 mr-1.5 text-teal-400" aria-hidden="true" /> Home charging friendly</span>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2 text-xs text-white/80">
+            <span className="flex items-center"><Zap className="w-4 h-4 mr-1.5 text-teal-300" aria-hidden="true" /> {electric.length} electric models</span>
+            <span className="flex items-center"><Bike className="w-4 h-4 mr-1.5 text-teal-300" aria-hidden="true" /> {BIKE_BRANDS.length} brands</span>
+            <span className="flex items-center"><BatteryCharging className="w-4 h-4 mr-1.5 text-teal-300" aria-hidden="true" /> Home charging friendly</span>
           </div>
         </div>
       </section>

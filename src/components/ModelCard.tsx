@@ -6,6 +6,8 @@ import { MessageSquare, Zap, Bike, Battery, Gauge } from 'lucide-react';
 import { formatPKR } from '@/lib/utils';
 import { imageForModel, type CatalogModel } from '@/lib/brands-data';
 import { enquiryLink } from '@/lib/contact';
+import { BIKE_FAMILIES, CAR_FAMILIES } from '@/lib/catalog';
+import VehicleImage from '@/components/VehicleImage';
 
 const PT_STYLE: Record<string, string> = {
   EV: 'bg-cyan-100 text-cyan-800',
@@ -27,33 +29,47 @@ const STATUS_STYLE: Record<string, string> = {
 export default function ModelCard({
   model,
   brandName,
+  brandSlug,
   index = 0,
 }: {
   model: CatalogModel;
   brandName: string;
+  brandSlug?: string;
   index?: number;
 }) {
   const img = imageForModel(model.body, index, brandName, model.name, model.pt);
   const isTwoWheeler = model.body === 'Motorcycle' || model.body === 'Scooter';
   const fullName = `${brandName} ${model.name}`;
+  const family = (isTwoWheeler ? BIKE_FAMILIES : CAR_FAMILIES).find(
+    (f) => f.brand === brandName && model.name.toLowerCase().startsWith(f.name.toLowerCase())
+  );
+  const href = family?.url || (brandSlug
+    ? `/${isTwoWheeler ? 'bikes' : 'cars'}/${brandSlug}`
+    : undefined);
 
   const waMsg = encodeURIComponent(
     `Hello MOTOR Pakistan, I would like details and the best price for the ${model.year} ${fullName}.`
   );
 
   return (
-    <article className="group bg-white rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
-      {/* Visual */}
+    <article className="group bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 hover:shadow-[0_12px_32px_rgba(15,23,42,0.10)] transition-all duration-300 overflow-hidden flex flex-col">
       <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
         {img ? (
-          <img
-            src={img}
-            alt={`${fullName} ${model.year} — ${model.pt} ${model.body} price in Pakistan`}
-            className={`w-full h-full group-hover:scale-[1.04] transition-transform duration-500 ${
-              img.endsWith('.svg') ? 'object-contain p-1' : 'object-cover'
-            }`}
-            loading="lazy"
-          />
+          href ? (
+            <Link href={href}>
+              <VehicleImage
+                src={img}
+                alt={`${fullName} ${model.year} — ${model.pt} ${model.body} price in Pakistan`}
+                className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+              />
+            </Link>
+          ) : (
+            <VehicleImage
+              src={img}
+              alt={`${fullName} ${model.year} — ${model.pt} ${model.body} price in Pakistan`}
+              className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+            />
+          )
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 flex flex-col items-center justify-center text-white gap-2">
             <Bike className="w-9 h-9 opacity-80" aria-hidden="true" />
@@ -82,10 +98,13 @@ export default function ModelCard({
         )}
       </div>
 
-      {/* Body */}
       <div className="p-4 flex-1 flex flex-col">
         <div className="flex-1">
-          <h3 className="text-[15px] font-bold text-slate-900 leading-snug">{fullName}</h3>
+          <h3 className="text-[15px] font-bold text-slate-900 leading-snug">
+            {href ? (
+              <Link href={href} className="hover:text-teal-700 transition-colors">{fullName}</Link>
+            ) : fullName}
+          </h3>
           <p className="text-xs text-slate-500 mt-0.5">
             {model.year} · {model.body}
             {model.battery ? ` · ${model.battery}` : ''}
@@ -95,7 +114,7 @@ export default function ModelCard({
             <span className="block text-[10px] font-semibold uppercase tracking-wide text-slate-400">
               {model.price > 0 ? (isTwoWheeler ? 'Retail Price' : 'Starting From') : 'Price'}
             </span>
-            <span className="text-lg font-black text-slate-900">
+            <span className="text-xl font-black text-[#c8102e]">
               {model.price > 0 ? formatPKR(model.price) : 'Price Coming Soon'}
             </span>
           </div>
@@ -114,10 +133,10 @@ export default function ModelCard({
 
         <div className="mt-4 grid grid-cols-2 gap-2">
           <Link
-            href="/test-drive"
+            href={href || '/test-drive'}
             className="text-center py-2 text-[11px] font-bold text-white bg-slate-900 hover:bg-slate-700 rounded-lg transition-colors"
           >
-            {isTwoWheeler ? 'Enquire Now' : 'Book Test Drive'}
+            {isTwoWheeler ? 'View Details' : 'Book Test Drive'}
           </Link>
           <a
             href={enquiryLink(waMsg)}

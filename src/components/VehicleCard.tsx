@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { MapPin, MessageSquare, GitCompareArrows, KeyRound, Zap } from 'lucide-react';
 import { formatPKR, formatNumber } from '@/lib/utils';
 import { enquiryLink } from '@/lib/contact';
+import VehicleImage from '@/components/VehicleImage';
 
 export interface VehicleProps {
   id: number;
@@ -74,16 +75,15 @@ export default function VehicleCard({
   const whatsappMsg = encodeURIComponent(
     `Hello MOTOR Pakistan, I would like to ask about the ${vehicle.year} ${vehicle.make} ${vehicle.model} (${vehicle.slug}).`
   );
+  const href = isRentalMode ? `/rent/${vehicle.slug}` : `/cars/${vehicle.slug}`;
 
   return (
-    <div className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 flex flex-col overflow-hidden">
-      {/* Image */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
-        <img
+    <article className="group bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.10)] hover:border-slate-300 transition-all duration-300 flex flex-col overflow-hidden">
+      <Link href={href} className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 block">
+        <VehicleImage
           src={vehicle.mainImage}
           alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} — ${vehicle.condition} vehicle in ${vehicle.location.split(',')[0] || 'Pakistan'}`}
           className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
-          loading="lazy"
         />
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
           {conditionBadge(vehicle)}
@@ -102,35 +102,30 @@ export default function VehicleCard({
             </span>
           </div>
         )}
-      </div>
+      </Link>
 
-      {/* Body */}
       <div className="p-4 flex-1 flex flex-col">
         <div className="flex-1">
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3 className="text-[15px] font-bold text-slate-900 leading-snug">
-                <Link
-                  href={isRentalMode ? `/rent/${vehicle.slug}` : `/cars/${vehicle.slug}`}
-                  className="hover:text-teal-700 transition-colors"
-                >
+                <Link href={href} className="hover:text-teal-700 transition-colors">
                   {vehicle.make} {vehicle.model}
                 </Link>
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">{vehicle.engineCapacity}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{vehicle.year} · {vehicle.engineCapacity}</p>
             </div>
             {vehicle.isFeatured && (
               <span className="text-[9px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 border border-teal-100 px-1.5 py-0.5 rounded shrink-0">
-                Popular
+                Featured
               </span>
             )}
           </div>
 
-          {/* Price */}
           <div className="mt-3">
             {isRentalMode ? (
               <div className="flex items-baseline gap-1.5">
-                <span className="text-lg font-black text-slate-900">{formatPKR(vehicle.rentalDailyRate || 10000)}</span>
+                <span className="text-xl font-black text-[#c8102e]">{formatPKR(vehicle.rentalDailyRate || 10000)}</span>
                 <span className="text-xs text-slate-500">/ day</span>
                 {vehicle.rentalWeeklyRate && (
                   <span className="text-[11px] text-slate-400 ml-auto">{formatPKR(vehicle.rentalWeeklyRate)} / week</span>
@@ -141,14 +136,13 @@ export default function VehicleCard({
                 {vehicle.priceLabel && (
                   <span className="block text-[10px] font-semibold uppercase tracking-wide text-slate-400">{vehicle.priceLabel}</span>
                 )}
-                <span className="text-lg font-black text-slate-900">
+                <span className="text-xl font-black text-[#c8102e]">
                   {vehicle.price > 0 ? formatPKR(vehicle.price) : 'Price Coming Soon'}
                 </span>
               </div>
             )}
           </div>
 
-          {/* Specs row */}
           <div className="mt-3 grid grid-cols-3 gap-2 py-2.5 border-y border-slate-100 text-[11px] text-slate-600">
             <div>
               <span className="block text-slate-400 text-[9px] font-semibold uppercase">Year</span>
@@ -164,20 +158,18 @@ export default function VehicleCard({
             </div>
           </div>
 
-          {/* Location */}
           <div className="mt-2.5 flex items-center text-[11px] text-slate-500">
             <MapPin className="w-3.5 h-3.5 mr-1 text-slate-400 shrink-0" />
             <span className="truncate">{vehicle.location.split(',')[0] || 'Pakistan'}</span>
           </div>
         </div>
 
-        {/* Actions */}
         <div className="mt-4 grid grid-cols-3 gap-2">
           <Link
-            href={isRentalMode ? `/rent/${vehicle.slug}` : `/cars/${vehicle.slug}`}
+            href={href}
             className="col-span-1 text-center py-2 text-[11px] font-bold text-white bg-slate-900 hover:bg-slate-700 rounded-lg transition-colors"
           >
-            {isRentalMode ? 'Rent Now' : 'View Details'}
+            {isRentalMode ? 'Rent Now' : 'View Ad'}
           </Link>
           {!isRentalMode ? (
             <Link
@@ -207,6 +199,6 @@ export default function VehicleCard({
           </a>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

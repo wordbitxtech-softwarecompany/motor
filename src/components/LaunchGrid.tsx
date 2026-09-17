@@ -81,7 +81,7 @@ export default function LaunchGrid({ families }: { families: ModelFamily[] }) {
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                   {confirmed ? 'Starting price' : 'Price'}
                 </p>
-                <p className="text-base font-black text-slate-900">
+                <p className="text-base font-black text-[#c8102e]">
                   {confirmed ? formatPKR(f.priceMin) : 'Not officially confirmed'}
                 </p>
               </div>

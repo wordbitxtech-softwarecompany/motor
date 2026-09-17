@@ -6,9 +6,17 @@
   }
 }
 
-/* ── Urdu / RTL support ─────────────────────────────── */
 html.lang-ur body {
   font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", system-ui, sans-serif;
   line-height: 2;
 }
 html[dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+
+img {
+  max-width: 100%;
+}
+
+::selection {
+  background: #0d9488;
+  color: #fff;
+}
