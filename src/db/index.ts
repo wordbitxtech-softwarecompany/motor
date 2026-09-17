@@ -11,10 +11,21 @@ const globalForDb = globalThis as typeof globalThis & {
   __arenaNextJsPostgresqlPool?: Pool;
 };
 
+/** Neon / Supabase / Vercel Postgres need TLS in production. */
+function poolSsl(): false | { rejectUnauthorized: boolean } {
+  if (/localhost|127\.0\.0\.1/.test(databaseUrl!)) return false;
+  if (/sslmode=disable/i.test(databaseUrl!)) return false;
+  return { rejectUnauthorized: false };
+}
+
 export const pool =
   globalForDb.__arenaNextJsPostgresqlPool ??
   new Pool({
     connectionString: databaseUrl,
+    ssl: poolSsl(),
+    max: 5,
+    connectionTimeoutMillis: 8_000,
+    idleTimeoutMillis: 20_000,
   });
 
 if (process.env.NODE_ENV !== "production") {

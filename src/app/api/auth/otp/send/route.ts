@@ -1,35 +1,42 @@
 import { NextResponse } from 'next/server';
-import { ensureDbInitialized } from '@/db/init';
-import { sendPhoneOtp } from '@/lib/otp';
+import { sendPhoneOtp, OTP_COOKIE } from '@/lib/otp';
+import { sessionCookieOptions } from '@/lib/cookies';
 
 export async function POST(req: Request) {
   try {
-    if (!process.env.DATABASE_URL) {
-      return NextResponse.json(
-        { error: 'Database is not configured. Set DATABASE_URL on the server.' },
-        { status: 503 }
-      );
-    }
-    await ensureDbInitialized();
-    const { phone } = await req.json();
-    const result = await sendPhoneOtp(phone || '');
+    const body = await req.json().catch(() => ({}));
+    const result = await sendPhoneOtp(String(body.phone || ''));
     if (!result.ok) {
       return NextResponse.json({ error: result.error || 'Could not send OTP.' }, { status: 400 });
     }
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
       phone: result.phone,
       channel: result.channel,
-      // Shown in UI when Twilio is not configured so signup still works
       ...(result.demoCode ? { demoCode: result.demoCode } : {}),
       message:
         result.channel === 'demo'
-          ? 'SMS gateway not linked yet — use the on-screen code. Add Twilio env vars to send real SMS.'
+          ? 'SMS not delivered yet — use the on-screen code. Check Twilio env on Vercel (Verify SID or Phone Number).'
           : 'OTP sent to your mobile number.',
     });
+
+    if (result.cookie) {
+      res.cookies.set(OTP_COOKIE, result.cookie, {
+        ...sessionCookieOptions(10 * 60),
+        httpOnly: true,
+      });
+    }
+    return res;
   } catch (e) {
     console.error('otp send error', e);
-    return NextResponse.json({ error: 'Could not send OTP. Try again.' }, { status: 500 });
+    const msg = e instanceof Error ? e.message : 'unknown';
+    return NextResponse.json(
+      {
+        error: 'Could not send OTP. Please try again.',
+        detail: process.env.NODE_ENV === 'production' ? undefined : msg,
+      },
+      { status: 500 }
+    );
   }
 }

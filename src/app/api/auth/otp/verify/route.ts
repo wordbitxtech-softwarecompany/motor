@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { eq } from 'drizzle-orm';
+import { randomBytes } from 'crypto';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { ensureDbInitialized } from '@/db/init';
+import { verifyPhoneOtp, OTP_COOKIE } from '@/lib/otp';
 import {
   createSession,
   SESSION_COOKIE,
@@ -10,17 +13,19 @@ import {
   hashPassword,
   validEmail,
 } from '@/lib/auth';
-import { verifyPhoneOtp } from '@/lib/otp';
-import { randomBytes } from 'crypto';
 
 export async function POST(req: Request) {
   try {
     if (!process.env.DATABASE_URL) {
       return NextResponse.json(
-        { error: 'Database is not configured. Set DATABASE_URL on the server.' },
+        {
+          error:
+            'Database is not connected (DATABASE_URL missing on Vercel). OTP verify needs the database to create your account.',
+        },
         { status: 503 }
       );
     }
+
     await ensureDbInitialized();
     const body = await req.json();
     const { phone, code, name, city, email } = body as {
@@ -31,7 +36,9 @@ export async function POST(req: Request) {
       email?: string;
     };
 
-    const verified = await verifyPhoneOtp(phone || '', code || '');
+    const jar = await cookies();
+    const otpCookie = jar.get(OTP_COOKIE)?.value;
+    const verified = await verifyPhoneOtp(phone || '', code || '', otpCookie);
     if (!verified.ok) {
       return NextResponse.json({ error: verified.error }, { status: 400 });
     }
@@ -43,12 +50,7 @@ export async function POST(req: Request) {
       .limit(1);
 
     let user = existing
-      ? {
-          id: existing.id,
-          name: existing.name,
-          email: existing.email,
-          role: existing.role,
-        }
+      ? { id: existing.id, name: existing.name, email: existing.email, role: existing.role }
       : null;
 
     if (!user) {
@@ -64,7 +66,11 @@ export async function POST(req: Request) {
       let userEmail =
         email && validEmail(email) ? email.trim().toLowerCase() : `u${digits.slice(-10)}@users.motor.pk`;
 
-      const [emailTaken] = await db.select({ id: users.id }).from(users).where(eq(users.email, userEmail)).limit(1);
+      const [emailTaken] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, userEmail))
+        .limit(1);
       if (emailTaken) {
         userEmail = `u${digits}${randomBytes(2).toString('hex')}@users.motor.pk`;
       }
@@ -88,9 +94,20 @@ export async function POST(req: Request) {
     const token = await createSession(user.id);
     const res = NextResponse.json({ success: true, user, isNew: !existing });
     res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions());
+    res.cookies.set(OTP_COOKIE, '', { ...sessionCookieOptions(0), httpOnly: true, maxAge: 0 });
     return res;
   } catch (e) {
     console.error('otp verify error', e);
+    const msg = e instanceof Error ? e.message : '';
+    if (/connect|ECONNREFUSED|timeout|DATABASE/i.test(msg)) {
+      return NextResponse.json(
+        {
+          error:
+            'Database connection failed. Fix DATABASE_URL on Vercel, then retry OTP.',
+        },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: 'Verification failed. Please try again.' }, { status: 500 });
   }
 }

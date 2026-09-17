@@ -6,22 +6,14 @@ import { db } from '@/db';
 import { users, sessions } from '@/db/schema';
 import { ensureDbInitialized } from '@/db/init';
 
+import { sessionCookieOptions as cookieOpts } from '@/lib/cookies';
+import { normalisePhone as normPhone } from '@/lib/phone';
+
 export const SESSION_COOKIE = 'motor_session';
 const SESSION_DAYS = 30;
 
-/** HttpOnly session cookie — secure only on HTTPS so localhost signup works. */
 export function sessionCookieOptions(maxAge = SESSION_DAYS * 86400) {
-  const secure =
-    process.env.COOKIE_SECURE === 'true' ||
-    process.env.VERCEL === '1' ||
-    process.env.NODE_ENV === 'production';
-  return {
-    httpOnly: true as const,
-    sameSite: 'lax' as const,
-    path: '/',
-    secure,
-    maxAge,
-  };
+  return cookieOpts(maxAge);
 }
 
 /* ── Password hashing (scrypt, salted) ───────────────── */
@@ -109,14 +101,4 @@ export function validEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
 }
 
-/** Accepts 03XXXXXXXXX or +923XXXXXXXXX and normalises to +92 3XX XXXXXXX. */
-export function normalisePhone(raw: string): string | null {
-  const d = raw.replace(/[^\d+]/g, '');
-  let core = '';
-  if (/^\+92\d{10}$/.test(d)) core = d.slice(3);
-  else if (/^92\d{10}$/.test(d)) core = d.slice(2);
-  else if (/^0\d{10}$/.test(d)) core = d.slice(1);
-  else return null;
-  if (!core.startsWith('3')) return null;
-  return `+92 ${core.slice(0, 3)} ${core.slice(3)}`;
-}
+export const normalisePhone = normPhone;
