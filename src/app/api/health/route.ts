@@ -43,7 +43,9 @@ export async function GET() {
       dbHost: databaseConnectionMeta.host,
       dbError,
       hint: !dbOk && hasDb
-        ? 'Direct db.*.supabase.co fails on Vercel (IPv6). Use Session pooler *.pooler.supabase.com:5432, or wait for auto-rewrite deploy.'
+        ? dbError?.includes('not found')
+          ? `Supabase project in DATABASE_URL is missing/deleted (ref in error). Open an ACTIVE project → Connect → Session pooler → paste that URI as DATABASE_URL on Vercel, then Redeploy.`
+          : 'Direct db.*.supabase.co fails on Vercel (IPv6). Use Session pooler *.pooler.supabase.com:5432.'
         : undefined,
       twilio: hasTwilio
         ? hasVerify
