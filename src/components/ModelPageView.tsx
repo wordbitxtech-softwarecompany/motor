@@ -9,6 +9,7 @@ import SchemaJsonLd from './SchemaJsonLd';
 import { formatPKR } from '@/lib/utils';
 import { vehicleSchema, faqSchema } from '@/lib/seo';
 import { relatedFamilies, PRICE_LAST_UPDATED, type ModelFamily } from '@/lib/catalog';
+import { isStudioPhoto } from '@/lib/vehicle-photos';
 import { BLOG_POSTS } from '@/lib/blog-data';
 
 /* ── Content generators (data-driven, never invented) ── */
@@ -176,7 +177,7 @@ export default function ModelPageView({ family }: { family: ModelFamily }) {
                 <img
                   src={f.image}
                   alt={`${full} ${f.year} Pakistan`}
-                  className={`w-full aspect-[16/10] ${f.image.endsWith('.svg') ? 'object-contain bg-slate-900' : 'object-cover'}`}
+                  className={`w-full aspect-[16/10] ${isStudioPhoto(f.image) ? 'object-contain bg-slate-900' : 'object-cover'}`}
                   width={640} height={400}
                 />
                 <div className="p-5">
@@ -324,7 +325,7 @@ export default function ModelPageView({ family }: { family: ModelFamily }) {
                   <img
                     src={r.image}
                     alt={`${r.brand} ${r.name} Pakistan`}
-                    className={`w-full aspect-[16/10] ${r.image.endsWith('.svg') ? 'object-contain bg-slate-50' : 'object-cover'}`}
+                    className={`w-full aspect-[16/10] ${isStudioPhoto(r.image) ? 'object-contain bg-slate-50' : 'object-cover'}`}
                     loading="lazy" width={320} height={200}
                   />
                   <div className="p-4">

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Zap, BatteryCharging, ArrowRight, Fuel, Info, Sparkles } from 'lucide-react';
 import { formatPKR, formatPowertrain } from '@/lib/utils';
 import { BRANDS, imageForModel } from '@/lib/brands-data';
+import { isStudioPhoto } from '@/lib/vehicle-photos';
 
 type TabKey = 'EV' | 'HEV' | 'PHEV' | 'REEV';
 
@@ -146,7 +147,7 @@ export default function NewEnergyVehicleHub() {
                   src={m.img}
                   alt={`${m.brand} ${m.name} ${m.year} — ${m.pt} in Pakistan`}
                   className={`w-full h-full group-hover:scale-105 transition-transform duration-500 ${
-                    m.img.endsWith('.svg') ? 'object-contain' : 'object-cover'
+                    isStudioPhoto(m.img) ? 'object-contain' : 'object-cover'
                   }`}
                   loading="lazy"
                 />

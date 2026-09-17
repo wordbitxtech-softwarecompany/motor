@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowRight, Info } from 'lucide-react';
 import { formatPKR, formatPowertrain } from '@/lib/utils';
 import type { ModelFamily } from '@/lib/catalog';
+import { isStudioPhoto } from '@/lib/vehicle-photos';
 
 const STATUS_STYLE: Record<string, string> = {
   'New Arrival': 'bg-teal-50 text-teal-700 border-teal-200',
@@ -45,7 +46,7 @@ export default function LaunchGrid({ families }: { families: ModelFamily[] }) {
                 src={f.image}
                 alt={`${f.brand} ${f.name} ${f.year} Pakistan`}
                 className={`w-full h-full group-hover:scale-105 transition-transform duration-500 ${
-                  f.image.endsWith('.svg') ? 'object-contain' : 'object-cover'
+                  isStudioPhoto(f.image) ? 'object-contain bg-slate-950' : 'object-cover'
                 }`}
                 loading="lazy" width={400} height={250}
               />

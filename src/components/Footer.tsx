@@ -148,6 +148,28 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* WordbitX branding — above city navigation */}
+        <aside className="mt-10 pt-8 border-t border-slate-800/70">
+          <a
+            href="https://www.wordbitxtech.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-slate-900 ring-1 ring-white/10 px-5 py-5 hover:ring-emerald-400/40 transition-colors"
+          >
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-emerald-400">Technology by</p>
+              <p className="text-2xl font-black text-white tracking-tight mt-1">WordbitX</p>
+              <p className="text-xs text-slate-400 mt-1.5 max-w-md">
+                Product, engineering and digital infrastructure behind MOTOR Pakistan.
+              </p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-white shrink-0">
+              wordbitxtech.com
+              <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+            </span>
+          </a>
+        </aside>
+
         {/* Cities */}
         <nav aria-label="Cities" className="mt-10 pt-8 border-t border-slate-800/70">
           <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-white mb-3">Browse by City</h2>

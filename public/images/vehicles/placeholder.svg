@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="MOTOR Pakistan catalog">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="750" fill="url(#bg)"/>
+  <text x="600" y="370" text-anchor="middle" fill="#f8fafc" font-family="ui-sans-serif, system-ui, sans-serif" font-size="42" font-weight="800" letter-spacing="8">MOTOR</text>
+  <text x="600" y="412" text-anchor="middle" fill="#64748b" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="700" letter-spacing="6">PAKISTAN CATALOG</text>
+</svg>

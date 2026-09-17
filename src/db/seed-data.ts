@@ -1,4 +1,4 @@
-import { SEDAN, SUV, CROSSOVER, HATCH } from '@/lib/media';
+import { photoForModel } from '@/lib/vehicle-photos';
 
 // MOTOR Pakistan — vehicle inventory data.
 // All listings are sample/demo data for reference.
@@ -45,8 +45,8 @@ export const SEED_VEHICLES = [
     v2l: false,
     batteryWarranty: null,
     vehicleWarranty: 'Inspection report available',
-    mainImage: SEDAN.corolla,
-    gallery: [SEDAN.corolla],
+    mainImage: photoForModel('Toyota', 'Corolla Altis Grande X 1.8 CVT', 'Sedan'),
+    gallery: [photoForModel('Toyota', 'Corolla Altis Grande X 1.8 CVT', 'Sedan')],
     features: ['Sunroof', 'Paddle Shifters', 'Cruise Control', 'Reverse Camera', 'Push Button Start', 'Vehicle Stability Control', 'Leather Upholstery', '9-inch Infotainment', 'Apple CarPlay & Android Auto', 'Dual SRS Airbags'],
     description: '2025 Toyota Corolla Altis Grande X 1.8 with 18,500 km on the clock. Single-owner driven in Lahore with a documented service history. Our multi-point inspection covers engine compression, suspension, paint-meter scans and on-ramp test driving. Prices reviewed regularly.'
   },
@@ -92,8 +92,8 @@ export const SEED_VEHICLES = [
     v2l: false,
     batteryWarranty: null,
     vehicleWarranty: 'Inspection report available',
-    mainImage: SEDAN.civic,
-    gallery: [SEDAN.civic],
+    mainImage: photoForModel('Honda', 'Civic RS 1.5 Turbo LL-CVT', 'Sedan'),
+    gallery: [photoForModel('Honda', 'Civic RS 1.5 Turbo LL-CVT', 'Sedan')],
     features: ['Honda Sensing ADAS', 'Adaptive Cruise Control', 'Collision Mitigation Braking', 'Lane Keeping Assist', 'Sunroof', 'Wireless Apple CarPlay', 'Digital Instrument Cluster', 'Sport Dual Exhaust'],
     description: '2025 Honda Civic RS Turbo available at our Karachi hub. 12,400 km, complete Honda warranty-service history, no panel repairs recorded. Honda Sensing active safety suite included. Prices reviewed regularly.'
   },
@@ -139,8 +139,8 @@ export const SEED_VEHICLES = [
     v2l: false,
     batteryWarranty: null,
     vehicleWarranty: 'Inspection report available',
-    mainImage: SEDAN.yaris,
-    gallery: [SEDAN.yaris],
+    mainImage: photoForModel('Toyota', 'Yaris ATIV X 1.5 CVT', 'Sedan'),
+    gallery: [photoForModel('Toyota', 'Yaris ATIV X 1.5 CVT', 'Sedan')],
     features: ['Smart Keyless Entry', 'Push Start', 'Automatic Climate Control', 'Steering Mounted Controls', 'Reverse Camera', 'Hill Start Assist', 'High Fuel Mileage (16+ km/l)'],
     description: '2024 Toyota Yaris ATIV X with 21,000 km, based at our Johar Town branch. Efficient daily commuter with strong city fuel economy. Prices reviewed regularly.'
   },
@@ -186,8 +186,8 @@ export const SEED_VEHICLES = [
     v2l: false,
     batteryWarranty: null,
     vehicleWarranty: 'Manufacturer warranty (as per dealer)',
-    mainImage: SUV.sportage,
-    gallery: [SUV.sportage],
+    mainImage: photoForModel('KIA', 'Sportage AWD 2.0 Automatic', 'SUV'),
+    gallery: [photoForModel('KIA', 'Sportage AWD 2.0 Automatic', 'SUV')],
     features: ['Panoramic Sunroof', 'All-Wheel Drive Lock', 'Wireless Smartphone Charger', 'Electronic Parking Brake with Auto Hold', 'Bi-Xenon Projection Headlamps', 'Smart Power Tailgate', 'Cruise Control', 'Rain Sensing Wipers'],
     description: 'New-arrival 2026 KIA Sportage AWD at our Islamabad hub. Ex-factory indicative pricing shown. Booking and delivery timelines depend on dealer allocation — contact our team for the latest schedule.'
   },
@@ -233,8 +233,8 @@ export const SEED_VEHICLES = [
     v2l: false,
     batteryWarranty: null,
     vehicleWarranty: 'Inspection report available',
-    mainImage: SUV.fortuner,
-    gallery: [SUV.fortuner],
+    mainImage: photoForModel('Toyota', 'Fortuner Legender 2.8D 4x4', 'SUV'),
+    gallery: [photoForModel('Toyota', 'Fortuner Legender 2.8D 4x4', 'SUV')],
     features: ['4x4 Differential Lock', 'Power Backdoor with Kick Sensor', 'Ventilated Front Seats', '360 Panoramic View Camera', 'Paddle Shifters', 'Drive Modes', '7 Full Leather Seats', 'Dual Zone Climate Control', '7 SRS Airbags'],
     description: '2025 Toyota Fortuner Legender 2.8D 4x4 with 28,000 km. Used by a single corporate owner between Lahore and Islamabad motorway routes. Full underbody and 4x4 driveline inspection completed. Prices reviewed regularly.'
   },
@@ -280,8 +280,8 @@ export const SEED_VEHICLES = [
     v2l: false,
     batteryWarranty: '8 Years / 160,000 km (hybrid battery)',
     vehicleWarranty: 'Manufacturer warranty (as per dealer)',
-    mainImage: CROSSOVER.corollaCross,
-    gallery: [CROSSOVER.corollaCross],
+    mainImage: photoForModel('Toyota', 'Corolla Cross 1.8 HEV Premium', 'Crossover'),
+    gallery: [photoForModel('Toyota', 'Corolla Cross 1.8 HEV Premium', 'Crossover')],
     features: ['Toyota Hybrid Synergy Drive', 'EV Mode Selector', 'Dual-Zone Auto Climate', 'Power Tailgate', 'Blind Spot Monitor', 'Rear Cross Traffic Alert', '7-inch Digital Instrument Cluster', '9 SRS Airbags'],
     description: 'Self-charging hybrid crossover. No plug required — the petrol engine and regenerative braking keep the battery topped up automatically. Real-world Lahore city fuel economy regularly exceeds 20 km/l in stop-and-go traffic.'
   },
@@ -327,8 +327,8 @@ export const SEED_VEHICLES = [
     v2l: false,
     batteryWarranty: '8 Years / 150,000 km (battery)',
     vehicleWarranty: '5 Years / 150,000 km',
-    mainImage: CROSSOVER.mgHs,
-    gallery: [CROSSOVER.mgHs],
+    mainImage: photoForModel('MG', 'HS Super Hybrid PHEV', 'SUV'),
+    gallery: [photoForModel('MG', 'HS Super Hybrid PHEV', 'SUV')],
     features: ['MG Pilot ADAS Level 2', 'Panoramic Stargazer Sunroof', '10.1-inch Touchscreen with Navigation', 'Adaptive Cruise Control', 'Lane Keep Assist', 'Regenerative Braking (3 levels)'],
     description: 'Plug-in hybrid SUV. Up to 52 km of pure electric driving for daily commutes in Lahore, with the turbocharged engine taking over for long-distance motorway trips — over 1,000 km combined range.'
   },
@@ -374,8 +374,8 @@ export const SEED_VEHICLES = [
     v2l: false,
     batteryWarranty: '8 Years / 120,000 km (battery)',
     vehicleWarranty: '3 Years / 100,000 km',
-    mainImage: HATCH.lumin,
-    gallery: [HATCH.lumin],
+    mainImage: photoForModel('Changan', 'Lumin 205km EV', 'Hatchback'),
+    gallery: [photoForModel('Changan', 'Lumin 205km EV', 'Hatchback')],
     features: ['10.25-inch Touchscreen', 'Hidden Flush Door Handles', 'Dual Airbags & ABS', 'Keyless Entry & Push Start', 'Ultra-low running cost (approx PKR 400 per 100 km)'],
     description: 'Compact pure-electric city hatchback. Charges overnight on a standard 220V household socket. Ideal for daily commutes in Gulberg, DHA and Johar Town at a fraction of petrol running costs.'
   },
@@ -421,8 +421,8 @@ export const SEED_VEHICLES = [
     v2l: true,
     batteryWarranty: '8 Years / 160,000 km (battery)',
     vehicleWarranty: '5 Years / 150,000 km',
-    mainImage: CROSSOVER.deepalS07,
-    gallery: [CROSSOVER.deepalS07],
+    mainImage: photoForModel('Deepal', 'S07 REEV (Range Extended EV)', 'SUV'),
+    gallery: [photoForModel('Deepal', 'S07 REEV (Range Extended EV)', 'SUV')],
     features: ['Electric drive with a range-extending petrol engine', '15.6-inch Rotating Display', 'AR Head-Up Display', 'Frameless Doors', 'V2L 3.3 kW power output', 'Level 2.5 assisted driving'],
     description: 'Range Extended EV: the wheels are driven 100% by the electric motor. The petrol engine only charges the battery on long journeys — 200 km pure electric range, 1,120 km total. No charging queues on the motorway.'
   }
@@ -436,7 +436,7 @@ export const SEED_OFFERS = [
     description: 'Book an EV or PHEV through the platform and request a Level-2 AC home charging consultation for Lahore, Islamabad or Karachi residences.',
     discountDetails: 'Installation support (demo offer)',
     validUntil: 'Limited-time offer',
-    imageUrl: HATCH.lumin,
+    imageUrl: photoForModel('Changan', 'Lumin 205km EV', 'Hatchback'),
     category: 'Sales',
     isActive: true,
     ctaText: 'Explore EV Cars',
@@ -449,7 +449,7 @@ export const SEED_OFFERS = [
     description: 'Rent a Fortuner, Corolla Cross or Yaris from Friday to Monday with free additional driver registration on weekend bookings.',
     discountDetails: 'Flat 15% off 3-day weekend bookings',
     validUntil: 'Limited-time offer',
-    imageUrl: SUV.fortuner,
+    imageUrl: photoForModel('Toyota', 'Fortuner Legender 2.8D 4x4', 'SUV'),
     category: 'Rental',
     isActive: true,
     ctaText: 'Book Weekend SUV',
@@ -462,7 +462,7 @@ export const SEED_OFFERS = [
     description: 'Trade in your existing vehicle against any listing. Submit your car details and receive an estimated evaluation range from the team.',
     discountDetails: 'Illustrative estimate only',
     validUntil: 'Limited-time offer',
-    imageUrl: SEDAN.corolla,
+    imageUrl: photoForModel('Toyota', 'Corolla Altis Grande X 1.8 CVT', 'Sedan'),
     category: 'Sales',
     isActive: true,
     ctaText: 'Value My Car',

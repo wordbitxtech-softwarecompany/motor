@@ -4,7 +4,7 @@
  * available or expected in the Pakistani market. Prices are indicative PKR.
  */
 
-import { SEDAN, SUV, CROSSOVER, HATCH, BIKE, EV, WIKI, FALLBACK_VEHICLE, mediaUrl } from './media';
+export { imageForModel } from './vehicle-photos';
 
 export type VehicleKind = 'car' | 'bike';
 
@@ -33,138 +33,6 @@ export interface Brand {
   /** First year the brand itself was in the Pakistani market. */
   enteredPakistan?: number;
   models: CatalogModel[];
-}
-
-/* ── Image helpers ───────────────────────────────────── */
-
-/** Body-specific photo pools — Pakistani-looking sedans/SUVs/hatches, not European luxury stand-ins. */
-const POOL: Record<string, string[]> = {
-  sedan: [SEDAN.corolla, SEDAN.civic, SEDAN.yaris, SEDAN.dark, SEDAN.silverLux, SEDAN.silverPergola, SEDAN.whiteSunset, SEDAN.silverMotion],
-  suv: [SUV.sportage, SUV.fortuner, SUV.whiteSunset, SUV.whiteUrban, SUV.whiteToyota, SUV.whiteStreet, SUV.whiteMountain, SUV.whiteNature, SUV.darkRear, SUV.silverShowroom],
-  crossover: [CROSSOVER.corollaCross, CROSSOVER.mgHs, CROSSOVER.deepalS07, SUV.whiteStreet, SUV.silverShowroom, SUV.whiteUrban],
-  hatchback: [HATCH.lumin, HATCH.silverMotion, HATCH.whiteUrban, HATCH.red, HATCH.blue, HATCH.blueRear, HATCH.whiteDoors, HATCH.green, HATCH.redClassic],
-  utility: [SUV.fortuner, SUV.whiteToyota, SUV.darkRear, SUV.whiteMountain],
-  ev: [EV.suv, EV.hatch, EV.sedan, EV.compact, EV.urban, EV.crossover],
-  motorcycle70: [WIKI.hondaCd70, WIKI.hondaCd70Classic],
-  motorcycle125: [WIKI.hondaCg125, WIKI.hondaCg125Alt],
-  motorcycle: [WIKI.hondaCd70, WIKI.hondaCg125, BIKE.street, WIKI.hondaCd70Classic],
-  sportbike: [BIKE.sport, BIKE.naked, BIKE.adventure, BIKE.cafe],
-  scooter: [BIKE.scooterEv, BIKE.scooter, BIKE.city, BIKE.parked],
-};
-
-/** Verified model-accurate photography — these always win. Longer keys first at lookup. */
-const EXACT: Record<string, string> = {
-  'toyota corolla cross': CROSSOVER.corollaCross,
-  'toyota corolla': SEDAN.corolla,
-  'toyota yaris': SEDAN.yaris,
-  'toyota fortuner': SUV.fortuner,
-  'toyota hilux': SUV.fortuner,
-  'honda civic': SEDAN.civic,
-  'honda city': SEDAN.yaris,
-  'suzuki alto': HATCH.whiteUrban,
-  'suzuki cultus': HATCH.lumin,
-  'suzuki swift': HATCH.red,
-  'kia sportage': SUV.sportage,
-  'mg hs': CROSSOVER.mgHs,
-  'changan lumin': HATCH.lumin,
-  'deepal s07': CROSSOVER.deepalS07,
-  'honda cd 70 dream': WIKI.hondaCd70Classic,
-  'honda cd 70': WIKI.hondaCd70,
-  'honda pridor': WIKI.hondaCd70Classic,
-  'honda cg 125': WIKI.hondaCg125,
-  'honda cb 125f': BIKE.naked,
-  'honda cb 150f': BIKE.sport,
-  'honda cb 250f': BIKE.adventure,
-  'yamaha ybr 125': BIKE.street,
-  'yamaha yb 125z': WIKI.hondaCg125Alt,
-  'yamaha yzf r15': BIKE.sport,
-  'united us 70': WIKI.hondaCd70Classic,
-  'road prince rp 70': WIKI.hondaCd70,
-  'metro mr 70': WIKI.hondaCd70Classic,
-  'kawasaki ninja': BIKE.sport,
-  'ktm 200 duke': BIKE.naked,
-  'yadea c1s': BIKE.scooterEv,
-  'evee c1': BIKE.scooter,
-  'vespa primavera': BIKE.city,
-};
-
-/** Images reserved by EXACT so the round-robin pool never reuses them. */
-const RESERVED = new Set(Object.values(EXACT));
-
-/** Stable string hash so assignment is deterministic across builds. */
-function hash(str: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < str.length; i++) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return Math.abs(h);
-}
-
-function poolFor(body: string): string[] {
-  const b = body.toLowerCase();
-  if (b.includes('hatch')) return POOL.hatchback;
-  if (b.includes('sedan')) return POOL.sedan;
-  if (b.includes('cross')) return POOL.crossover;
-  if (b.includes('mpv') || b.includes('van') || b.includes('pickup')) return POOL.utility;
-  if (b.includes('suv')) return POOL.suv;
-  return POOL.sedan;
-}
-
-const assigned = new Map<string, string>();
-const cursor: Record<string, number> = {};
-
-export function imageForModel(
-  body: string,
-  index = 0,
-  brand?: string,
-  model?: string,
-  pt?: string
-): string {
-  const b = body.toLowerCase();
-
-  if (brand && model) {
-    const full = `${brand} ${model}`.toLowerCase();
-    const keys = Object.keys(EXACT).sort((a, c) => c.length - a.length);
-    for (const k of keys) {
-      if (full.startsWith(k)) return mediaUrl(EXACT[k]);
-    }
-  }
-
-  const key = `${brand || ''}|${model || ''}|${body}|${pt || ''}`;
-  const cached = assigned.get(key);
-  if (cached) return cached;
-
-  let base: string[];
-  if (b.includes('scooter')) {
-    base = POOL.scooter;
-  } else if (b.includes('motorcycle')) {
-    const m = (model || '').toLowerCase();
-    const sporty = /cb |cbr|ninja|duke|r15|mt-|gr |gsx|tnt|leoncino|trk|zx|adventure|250|400|650/.test(m);
-    const is70 = /\b(cd 70|pridor|us 70|rp 70|mr 70|je 70)\b/.test(m) || /\b70\b/.test(m) && !/\b(100|110|125|150|160|250)\b/.test(m);
-    const is125 = /\b(cg 125|ybr 125|yb 125|us 125|rp 125|mr 125|gd 110|gs 150)\b/.test(m);
-    if (is70) base = POOL.motorcycle70;
-    else if (is125) base = POOL.motorcycle125;
-    else base = pt === 'EV' ? POOL.scooter : sporty ? POOL.sportbike : POOL.motorcycle;
-  } else if (pt === 'EV' || pt === 'PHEV' || pt === 'REEV') {
-    base = POOL.ev;
-  } else {
-    base = poolFor(body);
-  }
-
-  const pool = (b.includes('scooter') || b.includes('motorcycle'))
-    ? base
-    : base.filter((i) => !RESERVED.has(i));
-  if (pool.length === 0) return mediaUrl(FALLBACK_VEHICLE);
-
-  const poolKey = `${base[0]}|${pt || body}`;
-  if (cursor[poolKey] === undefined) cursor[poolKey] = (hash(key) + index) % pool.length;
-  const pick = pool[cursor[poolKey] % pool.length];
-  cursor[poolKey] = (cursor[poolKey] + 1) % pool.length;
-
-  const resolved = mediaUrl(pick);
-  assigned.set(key, resolved);
-  return resolved;
 }
 
 /** Every brand mark is a text-based SVG so it always deploys. */

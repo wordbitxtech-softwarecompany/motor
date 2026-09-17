@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ALL_BRANDS, getBrand } from '@/lib/brands-data';
 import ModelCard from '@/components/ModelCard';
 import { familiesForBrand } from '@/lib/catalog';
+import { isStudioPhoto } from '@/lib/vehicle-photos';
 import { formatPKR } from '@/lib/utils';
 import SchemaJsonLd from '@/components/SchemaJsonLd';
 import { SITE_URL } from '@/lib/site';
@@ -171,7 +172,7 @@ export default async function BrandDetailPage({
                   <img
                     src={f.image}
                     alt={`${brand.name} ${f.name} Pakistan`}
-                    className={`w-20 h-14 rounded-lg shrink-0 ${f.image.endsWith('.svg') ? 'object-contain bg-slate-50' : 'object-cover'}`}
+                    className={`w-20 h-14 rounded-lg shrink-0 ${isStudioPhoto(f.image) ? 'object-contain bg-slate-950' : 'object-cover'}`}
                     loading="lazy" width={80} height={56}
                   />
                   <span className="min-w-0">

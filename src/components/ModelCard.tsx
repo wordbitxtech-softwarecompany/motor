@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { MessageSquare, Zap, Bike, Battery, Gauge } from 'lucide-react';
 import { formatPKR, formatPowertrain } from '@/lib/utils';
 import { imageForModel, type CatalogModel } from '@/lib/brands-data';
+import { isStudioPhoto } from '@/lib/vehicle-photos';
 import { enquiryLink } from '@/lib/contact';
 import { BIKE_FAMILIES, CAR_FAMILIES } from '@/lib/catalog';
 import VehicleImage from '@/components/VehicleImage';
@@ -60,14 +61,18 @@ export default function ModelCard({
               <VehicleImage
                 src={img}
                 alt={`${fullName} ${model.year} — ${model.pt} ${model.body} price in Pakistan`}
-                className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+                className={`w-full h-full group-hover:scale-[1.04] transition-transform duration-500 ${
+                  isStudioPhoto(img) ? 'object-contain bg-slate-950' : 'object-cover'
+                }`}
               />
             </Link>
           ) : (
             <VehicleImage
               src={img}
               alt={`${fullName} ${model.year} — ${model.pt} ${model.body} price in Pakistan`}
-              className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+              className={`w-full h-full group-hover:scale-[1.04] transition-transform duration-500 ${
+                isStudioPhoto(img) ? 'object-contain bg-slate-950' : 'object-cover'
+              }`}
             />
           )
         ) : (

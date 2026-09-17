@@ -7,8 +7,8 @@
  *
  *   1. Every local `/images/...` path referenced in source exists in `public/`.
  *   2. Case-sensitive filename matches (Linux/Vercel is case sensitive).
- *   3. No binary assets live in `public/` (they were being dropped in transfer,
- *      so every shipped asset must be text — SVG — or served from a CDN).
+ *   3. Binary photos may only live in `public/images/vehicles/` (catalog JPEGs).
+ *      Other binaries in `public/` fail the check.
  *   4. Every remote image host is declared in next.config.ts remotePatterns.
  *
  * Exit code 1 on any failure so it can gate a deploy.
@@ -128,15 +128,18 @@ if (existsSync(brandsFile)) {
   }
 }
 
-/* ── 4. no binaries may ship in public/ ──────────────── */
+/* ── 4. binaries in public/ ──────────────────────────── */
+
+const BINARY_OK = /^images\/vehicles\/.+\.(jpe?g|webp)$/i;
 
 for (const f of walk(PUBLIC, null)) {
-  if (isBinary(f)) {
-    fail.push(
-      `BINARY ASSET   /${relative(PUBLIC, f)}\n     Binary files were dropped by the deploy pipeline. ` +
-      `Use an SVG or move the photo to the CDN registry in src/lib/media.ts.`
-    );
-  }
+  if (!isBinary(f)) continue;
+  const rel = relative(PUBLIC, f).split(/[\\/]/).join('/');
+  if (BINARY_OK.test(rel)) continue;
+  fail.push(
+    `BINARY ASSET   /${rel}\n     Binary files outside public/images/vehicles/ were dropped by older deploys. ` +
+      `Keep photos in public/images/vehicles/ or serve them from the CDN registry in src/lib/media.ts.`
+  );
 }
 
 /* ── 5. remote hosts must be allowlisted ─────────────── */
@@ -163,7 +166,7 @@ const orphans = [...publicFiles].filter(
 
 console.log('\nImage integrity check');
 console.log('─'.repeat(58));
-console.log(`  public assets      : ${publicFiles.size} (all text/SVG)`);
+console.log(`  public assets      : ${publicFiles.size}`);
 console.log(`  local refs checked : ${checked}`);
 console.log(`  remote hosts       : ${[...remoteHosts.keys()].join(', ') || 'none'}`);
 if (orphans.length) console.log(`  unreferenced assets: ${orphans.length}`);

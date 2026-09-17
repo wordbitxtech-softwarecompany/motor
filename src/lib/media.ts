@@ -1,13 +1,11 @@
 /**
  * MOTOR Pakistan — central media registry.
  *
- * Photographic assets are CDN URLs (Pexels, licensed for commercial use)
- * plus a small Wikimedia Commons allowlist for Pakistan-specific bikes
- * (Honda CD 70 / CG 125). We do not scrape PakWheels listing photos.
- * Runtime serving goes through `/media/pexels` and `/media/wiki`.
- *
- * Local copies remain in `public/images/**` (SVG marks only); this module
- * is the single source of truth for photography.
+ * Photographic assets:
+ *   - Pakistan-spec catalog JPEGs in `public/images/vehicles/`
+ *   - Pexels CDN (hero / city tiles) via `/media/pexels`
+ *   - Wikimedia Commons Honda CD 70 / CG 125 via `/media/wiki`
+ * We do not scrape PakWheels listing photos.
  */
 
 const PX = 'https://images.pexels.com/photos';
@@ -18,7 +16,7 @@ function px(id: number, w = 1200, h = 750): string {
 }
 
 /** Neutral fallback used if any image fails to load at runtime. */
-export const FALLBACK_VEHICLE = px(33359730);
+export const FALLBACK_VEHICLE = '/images/vehicles/placeholder.svg';
 
 /** Same-origin proxy so remote photos load reliably in Pakistan. */
 export function mediaUrl(src?: string | null): string {
@@ -34,8 +32,8 @@ export function mediaUrl(src?: string | null): string {
 export const HERO = {
   /** Original dark indoor showroom — overlay is applied in HeroSection. */
   showroom: px(29566879, 2000, 1100),
-  /** Secondary outdoor angle. */
-  showroomAlt: px(3802510, 2000, 1100),
+  /** Secondary outdoor angle — Pakistan Corolla, not exotic supercars. */
+  showroomAlt: '/images/vehicles/scene-new-cars.jpg',
   /** Daylight road scene used by some landing pages. */
   cityscape: px(33359730, 1800, 1000),
   /** Motorcycle hero — street commuter, not a superbike. */
@@ -89,7 +87,7 @@ export const HATCH = {
 export const EV = {
   compact: px(116675),
   hatch: px(12310882),
-  suv: px(8983368),
+  suv: '/images/vehicles/scene-ev-hybrid.jpg',
   sedan: px(210019),
   urban: px(1402787),
   crossover: px(20667627),
@@ -129,10 +127,10 @@ export const BIKE = {
 
 export const SCENE = {
   usedCars: px(33359730, 800, 520),
-  newCars: px(3802510, 800, 520),
+  newCars: '/images/vehicles/scene-new-cars.jpg',
   bikes: px(2393816, 800, 520),
-  ev: px(8983368, 800, 520),
-  rent: px(32340203, 800, 520),
+  ev: '/images/vehicles/scene-ev-hybrid.jpg',
+  rent: '/images/vehicles/toyota-fortuner.jpg',
   sell: px(1592384, 800, 520),
   lahore: px(18108314, 900, 600),
   islamabad: px(1402787, 900, 600),
@@ -150,15 +148,7 @@ export const REMOTE_IMAGE_HOSTS = ['images.pexels.com'] as const;
  * in any environment keep rendering without a data migration.
  */
 const LEGACY: Record<string, string> = {
-  '/images/vehicles/toyota-corolla.jpg': SEDAN.corolla,
-  '/images/vehicles/honda-civic.jpg': SEDAN.civic,
-  '/images/vehicles/toyota-yaris.jpg': SEDAN.yaris,
-  '/images/vehicles/kia-sportage.jpg': SUV.sportage,
-  '/images/vehicles/toyota-fortuner.jpg': SUV.fortuner,
-  '/images/vehicles/toyota-corolla-cross.jpg': CROSSOVER.corollaCross,
-  '/images/vehicles/mg-hs-phev.jpg': CROSSOVER.mgHs,
-  '/images/vehicles/deepal-s07.jpg': CROSSOVER.deepalS07,
-  '/images/vehicles/changan-lumin.jpg': HATCH.lumin,
+  '/images/vehicles/mg-hs-phev.jpg': '/images/vehicles/mg-hs.jpg',
   '/images/vehicles/showroom-hero.jpg': HERO.showroom,
   '/images/vehicles/showroom-alt.jpg': HERO.showroomAlt,
   '/images/showroom-hero.jpg': HERO.showroom,
@@ -176,6 +166,8 @@ const LEGACY: Record<string, string> = {
 export function resolveImage(src?: string | null): string {
   if (!src) return mediaUrl(FALLBACK_VEHICLE);
   if (LEGACY[src]) return mediaUrl(LEGACY[src]);
+  // Catalog JPEGs / studio cards in /images/vehicles ship with the build.
+  if (/^\/images\/vehicles\/.+\.(jpe?g|png|webp|svg)$/i.test(src)) return src;
   // Any other legacy raster path in /images/ no longer ships — use fallback.
   if (/^\/images\/.+\.(jpe?g|png|webp|avif)$/i.test(src)) return mediaUrl(FALLBACK_VEHICLE);
   return mediaUrl(src);
