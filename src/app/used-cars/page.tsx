@@ -1,16 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { eq, desc } from 'drizzle-orm';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import SchemaJsonLd from '@/components/SchemaJsonLd';
 import UsedCarsExplorer, { type UsedCar } from './UsedCarsExplorer';
 import { buildMetadata, itemListSchema, faqSchema } from '@/lib/seo';
 import { CAR_FAMILIES } from '@/lib/catalog';
-import { FALLBACK_VEHICLE } from '@/lib/media';
-import { db } from '@/db';
-import { listings } from '@/db/schema';
-import { ensureDbInitialized } from '@/db/init';
+import { getApprovedListings } from '@/lib/listings';
 import { PlusCircle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -30,7 +26,7 @@ const FAQS = [
   { q: 'How do I buy a used car safely in Pakistan?', a: 'Always inspect the vehicle in person, verify the registration book against the chassis and engine numbers, check for accident repair, and confirm token tax and transfer status with the relevant Excise office before paying.' },
   { q: 'What documents are needed to transfer a used car?', a: 'You typically need the original registration book or smart card, CNIC copies of both parties, a completed transfer of ownership application, and clearance of outstanding token tax. Biometric verification is required in most provinces.' },
   { q: 'How is the price of a used car decided?', a: 'Price depends on model year, mileage, condition, service history, registration city, ownership count and current demand for that variant. Comparing several similar listings gives the most realistic picture.' },
-  { q: 'Can I sell my own car on MOTOR Pakistan?', a: 'Yes. Create a free account, then post your ad with photos and details. Every ad is reviewed by our team before it goes live to keep listings genuine.' },
+  { q: 'Can I sell my own car on MOTOR Pakistan?', a: 'Yes. Post your ad with photos and contact details — no account required. Every ad is reviewed by our team before it goes live.' },
 ];
 
 export default async function UsedCarsPage({
@@ -38,25 +34,26 @@ export default async function UsedCarsPage({
 }: { searchParams: Promise<{ [k: string]: string | undefined }> }) {
   const sp = await searchParams;
 
-  // 1. Real seller listings (approved only)
-  let sellerAds: UsedCar[] = [];
-  try {
-    await ensureDbInitialized();
-    const rows = await db.select().from(listings).where(eq(listings.status, 'approved')).orderBy(desc(listings.id));
-    sellerAds = rows.map((r) => ({
-      id: `ad-${r.id}`,
-      reference: r.reference,
-      make: r.make, model: r.model, variant: r.variant,
-      year: r.year, price: r.price, mileage: r.mileage,
-      fuelType: r.fuelType, transmission: r.transmission,
-      city: r.city, bodyType: r.bodyType,
-      image: r.images?.[0] || FALLBACK_VEHICLE,
-      source: 'listing' as const,
-      href: `/used-cars/${r.reference}`,
-    }));
-  } catch { /* listings unavailable */ }
+  const approved = await getApprovedListings(100);
+  const sellerAds: UsedCar[] = approved.map((r) => ({
+    id: `ad-${r.id}`,
+    reference: r.reference,
+    make: r.make,
+    model: r.model,
+    variant: r.variant,
+    year: r.year,
+    price: r.price,
+    mileage: r.mileage,
+    fuelType: r.fuelType,
+    transmission: r.transmission,
+    city: r.city,
+    bodyType: r.bodyType,
+    image: r.image,
+    source: 'listing' as const,
+    href: r.href,
+  }));
 
-  // 2. Catalog models priced as used-market reference
+  // Catalog models priced as used-market reference
   const CITIES = ['Lahore','Karachi','Islamabad','Rawalpindi','Faisalabad','Multan','Gujranwala','Peshawar'];
   const catalogCars: UsedCar[] = CAR_FAMILIES
     .filter((f) => f.priceMin > 0 && f.variants.some((v) => v.status === 'Dealer Stock' || v.status === 'Available in Pakistan'))

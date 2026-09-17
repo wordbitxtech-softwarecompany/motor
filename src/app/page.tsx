@@ -15,6 +15,7 @@ import {
 import HeroSection from '@/components/HeroSection';
 import CategoryStrip from '@/components/CategoryStrip';
 import SellCarSection from '@/components/SellCarSection';
+import RecentSellerAds from '@/components/RecentSellerAds';
 import LatestCarsSection from '@/components/LatestCarsSection';
 import NewEnergyVehicleHub from '@/components/NewEnergyVehicleHub';
 import VehicleCard from '@/components/VehicleCard';
@@ -22,6 +23,7 @@ import BrandGrid from '@/components/BrandGrid';
 import ModelCard from '@/components/ModelCard';
 import NewLaunchesStrip from '@/components/NewLaunchesStrip';
 import { getAllVehicles, getRentalVehicles } from '@/lib/data';
+import { getApprovedListings } from '@/lib/listings';
 import { BLOG_POSTS } from '@/lib/blog-data';
 import { BIKE_BRANDS, ALL_BRANDS, totalModelCount, BRANDS } from '@/lib/brands-data';
 import { launchesFor, CATALOG_STATS, familiesForBrand } from '@/lib/catalog';
@@ -31,6 +33,8 @@ import { buildMetadata, faqSchema } from '@/lib/seo';
 import SchemaJsonLd from '@/components/SchemaJsonLd';
 import { SCENE, mediaUrl } from '@/lib/media';
 import { formatPKR } from '@/lib/utils';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = buildMetadata({
   title: 'MOTOR Pakistan | Cars, Bikes, Prices, EVs & Hybrids 2026',
@@ -67,8 +71,11 @@ const HOME_FAQS = [
 ];
 
 export default async function HomePage() {
-  const allVehicles = await getAllVehicles();
-  const rentalCars = await getRentalVehicles();
+  const [allVehicles, rentalCars, recentAds] = await Promise.all([
+    getAllVehicles(),
+    getRentalVehicles(),
+    getApprovedListings(6),
+  ]);
 
   const featuredBikePicks = [
     { brand: 'Honda', name: 'CD 70' },
@@ -107,6 +114,7 @@ export default async function HomePage() {
       <HeroSection />
       <CategoryStrip />
       <SellCarSection />
+      <RecentSellerAds ads={recentAds} />
 
       {/* 02b — New brand launches strip (priority for 2026 entrants) */}
       <NewLaunchesStrip />
@@ -236,30 +244,64 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 06 — Used Cars */}
+      {/* 06 — Used Cars / recent marketplace ads */}
       <section className="py-20 bg-white border-y border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-teal-700">Certified Pre-Owned</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-teal-700">
+                {recentAds.length ? 'Marketplace' : 'Certified Pre-Owned'}
+              </span>
               <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 mt-1.5">
-                Used Cars Across Pakistan
+                {recentAds.length ? 'Used Cars for Sale' : 'Used Cars Across Pakistan'}
               </h2>
               <p className="text-sm text-slate-500 mt-2 max-w-xl">
-                Multi-point inspected pre-owned vehicles with documented service history and verified ownership records.
+                {recentAds.length
+                  ? 'Approved seller listings — newest posts appear here first.'
+                  : 'Multi-point inspected pre-owned vehicles with documented service history and verified ownership records.'}
               </p>
             </div>
-            <Link href="/used-cars-lahore" className="inline-flex items-center text-[13px] font-bold text-slate-900 hover:text-teal-700 transition-colors">
+            <Link href="/used-cars" className="inline-flex items-center text-[13px] font-bold text-slate-900 hover:text-teal-700 transition-colors">
               View used cars
               <ArrowRight className="w-4 h-4 ml-1.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {usedCars.slice(0, 3).map((car) => (
-              <VehicleCard key={car.id} vehicle={car} viewMode="sale" />
-            ))}
-          </div>
+          {recentAds.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recentAds.slice(0, 6).map((ad) => (
+                <Link
+                  key={ad.reference}
+                  href={ad.href}
+                  className="group rounded-2xl border border-slate-200 bg-white overflow-hidden hover:border-slate-400 hover:shadow-md transition-all"
+                >
+                  <span className="block aspect-[16/10] bg-slate-100 overflow-hidden">
+                    <img
+                      src={ad.image}
+                      alt={`${ad.year} ${ad.make} ${ad.model}`}
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  </span>
+                  <span className="block p-4">
+                    <h3 className="text-[15px] font-black text-slate-900 group-hover:text-teal-700 transition-colors">
+                      {ad.year} {ad.make} {ad.model}
+                    </h3>
+                    <p className="mt-1.5 text-base font-black text-slate-900">{formatPKR(ad.price)}</p>
+                    <p className="mt-1 text-[11px] text-slate-500">
+                      {ad.city} · {ad.mileage.toLocaleString()} km · {ad.fuelType}
+                    </p>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {usedCars.slice(0, 3).map((car) => (
+                <VehicleCard key={car.id} vehicle={car} viewMode="sale" />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
