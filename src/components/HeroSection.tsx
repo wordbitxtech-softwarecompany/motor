@@ -43,18 +43,18 @@ export default function HeroSection() {
           {t('hero.subtitle', 'With thousands of cars, bikes and EVs, we have just the right one for you')}
         </p>
 
-        <div className="mt-8">
-          <div className="w-full max-w-4xl mx-auto">
-            <div className="flex justify-center gap-1 mb-0">
+        <div className="mt-8 w-full max-w-4xl mx-auto text-left">
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="flex border-b border-slate-100">
               {TABS.map((item) => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => setTab(item.id)}
-                  className={`px-5 py-2.5 text-[13px] font-bold rounded-t-xl transition-colors ${
+                  className={`flex-1 sm:flex-none px-5 py-3 text-[13px] font-bold transition-colors ${
                     tab === item.id
-                      ? 'bg-white text-slate-900'
-                      : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
+                      ? 'text-[#c8102e] border-b-2 border-[#c8102e] bg-red-50/40'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
                   {item.label}
@@ -62,6 +62,14 @@ export default function HeroSection() {
               ))}
             </div>
             <HeroSearch destination={dest} stacked />
+          </div>
+          <div className="mt-5 text-center">
+            <a
+              href={dest}
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg border border-white/50 bg-white/15 text-white text-[13px] font-semibold hover:bg-white/25 transition-colors shadow-sm backdrop-blur-sm"
+            >
+              {t('hero.findMore', 'Find More ›')}
+            </a>
           </div>
         </div>
 

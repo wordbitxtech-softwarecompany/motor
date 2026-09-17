@@ -64,9 +64,9 @@ export default function HeroSearch({
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className={`flex flex-col md:flex-row md:items-stretch gap-2 md:gap-0 md:overflow-hidden md:shadow-2xl ${
-        stacked ? 'md:rounded-b-2xl md:rounded-tr-2xl bg-white p-2 md:p-0' : 'md:rounded-xl'
+    <div className={stacked ? 'w-full' : 'w-full max-w-4xl mx-auto'}>
+      <div className={`flex flex-col md:flex-row md:items-stretch ${
+        stacked ? '' : 'gap-2 md:gap-0 md:rounded-xl md:overflow-hidden md:shadow-2xl'
       }`}>
         {/* Model / make input */}
         <div ref={boxRef} className="relative flex-1 md:flex-[1.4]">
@@ -159,6 +159,7 @@ export default function HeroSearch({
       </div>
 
       {/* Find more button */}
+      {!stacked && (
       <div className="mt-6 text-center">
         <a
           href={destination}
@@ -167,6 +168,7 @@ export default function HeroSearch({
           {t('hero.findMore', 'Find More ›')}
         </a>
       </div>
+      )}
     </div>
   );
 }
