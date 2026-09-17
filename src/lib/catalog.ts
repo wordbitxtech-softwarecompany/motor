@@ -105,7 +105,7 @@ const FAMILY_RULES: string[] = [
   'L03 BEV', 'L03 REEV', 'L03', 'XPeng G6', 'XPeng G9', 'XPeng P7', 'XPeng X9',
   'Zeekr X', 'Zeekr 001', 'Zeekr 7X', 'Zeekr 009',
   // Jetour / Forthing / JMEV / Kaiyi / NEVO / Riddara / iCAUR / Denza
-  'X70 Plus', 'X90 Plus', 'Dashing', 'T2 i-DM', 'T2', 'T1', 'G700', 'Traveller', 'X50',
+  'X70 Plus', 'X90 Plus', 'Dashing', 'T3', 'T2', 'T1', 'G700', 'Traveller', 'X50',
   'Friday', 'Elight', 'EV3', 'e-Qute', 'X3 Pro',
   'Hunter', 'A06', 'Q05', 'Q07', 'RD6', 'V27', 'V23',
   'Denza B5', 'Denza B8',
@@ -133,7 +133,7 @@ const FAMILY_RULES: string[] = [
   'Defender', 'Discovery',
   'Model 3', 'Model Y',
   // Bikes
-  'CD 70', 'CG 125', 'CB 125F', 'CB 150F', 'CB 250F', 'Pridor', 'PCX', 'CRF',
+  'CD 70 Dream', 'CD 70', 'CG 125', 'CB 125F', 'CB 150F', 'CB 250F', 'Pridor', 'PCX', 'CRF',
   'YBR 125', 'YB 125Z', 'YZF R15', 'MT-15', 'NMAX',
   'GD 110S', 'GS 150', 'GR 150', 'GSX 125', 'Inazuma', 'Burgman',
   'US 70', 'US 100', 'US 125', 'US 150', 'US-1', 'Scooty 100',

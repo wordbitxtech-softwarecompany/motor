@@ -8,8 +8,9 @@ import { BIKE_BRANDS } from '@/lib/brands-data';
 
 type Filter = 'all' | 'electric' | 'petrol' | string; // string = brand slug
 
-export default function BikeBrandExplorer() {
+export default function BikeBrandExplorer({ initialQuery = '' }: { initialQuery?: string }) {
   const [active, setActive] = useState<Filter>('all');
+  const q = initialQuery.trim().toLowerCase();
 
   const allModels = useMemo(
     () =>
@@ -20,11 +21,20 @@ export default function BikeBrandExplorer() {
   );
 
   const shown = useMemo(() => {
-    if (active === 'all') return allModels;
-    if (active === 'electric') return allModels.filter((m) => m.pt === 'EV');
-    if (active === 'petrol') return allModels.filter((m) => m.pt !== 'EV');
-    return allModels.filter((m) => m.brandSlug === active);
-  }, [allModels, active]);
+    let list = allModels;
+    if (active === 'electric') list = list.filter((m) => m.pt === 'EV');
+    else if (active === 'petrol') list = list.filter((m) => m.pt !== 'EV');
+    else if (active !== 'all') list = list.filter((m) => m.brandSlug === active);
+    if (q) {
+      list = list.filter(
+        (m) =>
+          m.name.toLowerCase().includes(q) ||
+          m.brand.toLowerCase().includes(q) ||
+          `${m.brand} ${m.name}`.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [allModels, active, q]);
 
   const activeBrand = BIKE_BRANDS.find((b) => b.slug === active);
 
@@ -112,10 +122,11 @@ export default function BikeBrandExplorer() {
       {/* Result header */}
       <div className="flex flex-wrap items-baseline justify-between gap-2 pb-3 border-b border-slate-200">
         <h3 className="text-lg font-black tracking-tight text-slate-900">
-          {active === 'all' && 'All Bikes & Scooties'}
-          {active === 'electric' && 'Electric Bikes & Scooties'}
-          {active === 'petrol' && 'Petrol Motorcycles'}
-          {activeBrand && `${activeBrand.name} Bikes`}
+          {q && `Results for “${initialQuery.trim()}”`}
+          {!q && active === 'all' && 'All Bikes & Scooties'}
+          {!q && active === 'electric' && 'Electric Bikes & Scooties'}
+          {!q && active === 'petrol' && 'Petrol Motorcycles'}
+          {!q && activeBrand && `${activeBrand.name} Bikes`}
         </h3>
         <span className="text-xs font-semibold text-slate-500">{shown.length} models</span>
       </div>

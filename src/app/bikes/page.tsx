@@ -25,7 +25,12 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function BikesPage() {
+export default async function BikesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) {
+  const params = await searchParams;
   const allModels = BIKE_BRANDS.flatMap((b) => b.models);
   const electric = allModels.filter((m) => m.pt === 'EV');
 
@@ -97,7 +102,7 @@ export default function BikesPage() {
 
       {/* Brand slider + filtered models */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <BikeBrandExplorer />
+        <BikeBrandExplorer initialQuery={params.q || ''} />
       </section>
 
       {/* FAQ */}
