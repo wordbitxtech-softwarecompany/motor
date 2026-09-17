@@ -17,12 +17,21 @@ const MAX_BYTES = 1_500_000;
 export default function PostAdForm({
   listingType = 'self',
   userCity = 'Lahore',
+  signedIn = false,
+  prefill,
 }: {
   listingType?: 'self' | 'assisted';
   userCity?: string;
+  signedIn?: boolean;
+  prefill?: { name?: string; phone?: string; email?: string };
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [kind, setKind] = useState<'car' | 'bike'>('car');
+  const [seller, setSeller] = useState({
+    name: prefill?.name || '',
+    phone: prefill?.phone || '',
+    email: prefill?.email || '',
+  });
   const [f, setF] = useState({
     make: '', model: '', variant: '', year: String(new Date().getFullYear() - 2),
     price: '', mileage: '', fuelType: 'Petrol', transmission: 'Manual',
@@ -38,6 +47,8 @@ export default function PostAdForm({
   const brandList = kind === 'car' ? BRANDS : BIKE_BRANDS;
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setF((p) => ({ ...p, [k]: e.target.value }));
+  const setSellerField = (k: keyof typeof seller) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setSeller((p) => ({ ...p, [k]: e.target.value }));
 
   function onFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []).slice(0, MAX_IMAGES - images.length);
@@ -58,14 +69,19 @@ export default function PostAdForm({
       const res = await fetch('/api/listings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...f, listingType, vehicleKind: kind, features, images }),
+        body: JSON.stringify({
+          ...f,
+          listingType,
+          vehicleKind: kind,
+          features,
+          images,
+          sellerName: seller.name,
+          sellerPhone: seller.phone,
+          sellerEmail: seller.email,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
-        if (data.requiresAuth) {
-          window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
-          return;
-        }
         setErr(data.error || 'Could not submit your ad.');
         return;
       }
@@ -89,13 +105,19 @@ export default function PostAdForm({
         </span>
         <h2 className="mt-4 text-xl font-black text-slate-900">Ad submitted for review</h2>
         <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-          Your reference is <strong className="text-slate-900">{done.reference}</strong>. Our team reviews every
-          ad before it goes live — usually within a few hours. You&apos;ll see the status in your account.
+          Your reference is <strong className="text-slate-900">{done.reference}</strong>. Save it — our team
+          reviews every ad before it goes live (usually within a few hours).
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-          <Link href="/account" className="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-700 transition-colors">
-            View my ads
-          </Link>
+          {signedIn ? (
+            <Link href="/account" className="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-700 transition-colors">
+              View my ads
+            </Link>
+          ) : (
+            <Link href={`/signup?next=${encodeURIComponent('/account')}`} className="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-700 transition-colors">
+              Create account (optional)
+            </Link>
+          )}
           <Link href="/used-cars" className="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-800 text-xs font-bold hover:bg-slate-50 transition-colors">
             Browse used cars
           </Link>
@@ -111,6 +133,30 @@ export default function PostAdForm({
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" /> {err}
         </p>
       )}
+
+      {/* Contact — required for guests; shown (editable) for signed-in too */}
+      <fieldset className="rounded-2xl bg-white border border-slate-200 p-5 space-y-4">
+        <legend className="px-2 text-xs font-black uppercase tracking-wide text-slate-500">Your contact</legend>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label htmlFor="pa-sname" className={label}>Full name *</label>
+            <input id="pa-sname" required value={seller.name} onChange={setSellerField('name')} className={input} placeholder="Ahmed Raza" autoComplete="name" />
+          </div>
+          <div>
+            <label htmlFor="pa-sphone" className={label}>Mobile *</label>
+            <input id="pa-sphone" required value={seller.phone} onChange={setSellerField('phone')} className={input} placeholder="0301 2345678" autoComplete="tel" inputMode="tel" />
+          </div>
+          <div>
+            <label htmlFor="pa-semail" className={label}>Email</label>
+            <input id="pa-semail" type="email" value={seller.email} onChange={setSellerField('email')} className={input} placeholder="optional" autoComplete="email" />
+          </div>
+        </div>
+        {!signedIn && (
+          <p className="text-[11px] text-slate-500">
+            Buyers and our team will use this number. Posting does not require an account — you can sign up later from the header.
+          </p>
+        )}
+      </fieldset>
 
       {/* Vehicle type */}
       <fieldset className="rounded-2xl bg-white border border-slate-200 p-5">

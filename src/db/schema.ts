@@ -175,7 +175,7 @@ export const phoneOtps = pgTable('phone_otps', {
 export const listings = pgTable('listings', {
   id: serial('id').primaryKey(),
   reference: varchar('reference', { length: 40 }).notNull().unique(),
-  userId: integer('user_id').notNull(),
+  userId: integer('user_id'), // null = guest post (no account required)
 
   // Listing route: 'self' = Sell It Myself, 'assisted' = Sell It For Me
   listingType: varchar('listing_type', { length: 20 }).default('self').notNull(),

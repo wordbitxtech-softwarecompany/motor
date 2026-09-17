@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { listings } from '@/db/schema';
 import { ensureDbInitialized } from '@/db/init';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, validEmail } from '@/lib/auth';
+import { normalisePhone } from '@/lib/phone';
 
 const CITIES = ['Lahore','Karachi','Islamabad','Rawalpindi','Faisalabad','Multan','Gujranwala','Peshawar','Quetta','Sialkot','Hyderabad','Other'];
 
@@ -10,15 +11,10 @@ export async function POST(req: Request) {
   try {
     await ensureDbInitialized();
 
-    const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Please sign in to post your ad.', requiresAuth: true }, { status: 401 });
-    }
-
+    const user = await getCurrentUser().catch(() => null);
     const b = await req.json();
     const listingType = b.listingType === 'assisted' ? 'assisted' : 'self';
 
-    // Validation — never store fabricated values
     const errs: string[] = [];
     if (!b.make?.trim()) errs.push('Make is required');
     if (!b.model?.trim()) errs.push('Model is required');
@@ -31,6 +27,18 @@ export async function POST(req: Request) {
     if (!b.city || !CITIES.includes(b.city)) errs.push('Select a valid city');
     if (!b.fuelType?.trim()) errs.push('Select fuel type');
     if (!b.transmission?.trim()) errs.push('Select transmission');
+
+    const sellerName = String(b.sellerName || user?.name || '').trim();
+    const phoneRaw = String(b.sellerPhone || user?.phone || '').trim();
+    const sellerPhone = normalisePhone(phoneRaw) || phoneRaw;
+    const emailRaw = String(b.sellerEmail || user?.email || '').trim().toLowerCase();
+    const sellerEmail = emailRaw && validEmail(emailRaw) ? emailRaw : emailRaw || (user?.email ?? '');
+
+    if (sellerName.length < 2) errs.push('Enter your full name');
+    if (!sellerPhone || sellerPhone.replace(/\D/g, '').length < 10) {
+      errs.push('Enter a valid Pakistani mobile number');
+    }
+
     if (errs.length) return NextResponse.json({ error: errs.join('. ') }, { status: 400 });
 
     const images: string[] = Array.isArray(b.images)
@@ -41,7 +49,7 @@ export async function POST(req: Request) {
 
     const [row] = await db.insert(listings).values({
       reference,
-      userId: user.id,
+      userId: user?.id ?? null,
       listingType,
       vehicleKind: b.vehicleKind === 'bike' ? 'bike' : 'car',
       make: b.make.trim(),
@@ -60,9 +68,9 @@ export async function POST(req: Request) {
       description: b.description?.trim()?.slice(0, 2000) || null,
       features: Array.isArray(b.features) ? b.features.slice(0, 30) : [],
       images,
-      sellerName: user.name,
-      sellerPhone: user.phone,
-      sellerEmail: user.email,
+      sellerName,
+      sellerPhone,
+      sellerEmail: sellerEmail || 'guest@motor.pk',
       status: 'pending',
     }).returning({ id: listings.id, reference: listings.reference });
 

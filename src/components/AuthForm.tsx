@@ -373,6 +373,17 @@ export default function AuthForm({ mode }: { mode: 'signup' | 'login' }) {
           </>
         )}
       </p>
+
+      {next.startsWith('/sell/') && (
+        <p className="text-center">
+          <Link
+            href={next}
+            className="text-xs font-bold text-slate-500 hover:text-slate-800 hover:underline"
+          >
+            Skip — continue without account
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

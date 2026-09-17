@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import PostAdForm from '@/components/PostAdForm';
 import { buildMetadata } from '@/lib/seo';
@@ -15,8 +15,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function HelpMeSellPage() {
-  const user = await getCurrentUser();
-  if (!user) redirect('/signup?next=%2Fsell%2Fhelp-me-sell');
+  const user = await getCurrentUser().catch(() => null);
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -25,6 +24,19 @@ export default async function HelpMeSellPage() {
         <h1 className="mt-5 text-3xl font-black tracking-tight text-slate-900">Help me sell my car</h1>
         <p className="text-sm text-slate-500 mt-1.5">
           Share your vehicle details and our team will take it from there.
+          {!user && (
+            <>
+              {' '}
+              <Link href="/signup?next=%2Fsell%2Fhelp-me-sell" className="font-bold text-teal-700 hover:underline">
+                Sign up
+              </Link>
+              {' · '}
+              <Link href="/login?next=%2Fsell%2Fhelp-me-sell" className="font-bold text-teal-700 hover:underline">
+                Sign in
+              </Link>
+              {' · optional'}
+            </>
+          )}
         </p>
 
         <ul className="mt-5 mb-7 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -35,7 +47,12 @@ export default async function HelpMeSellPage() {
           ))}
         </ul>
 
-        <PostAdForm listingType="assisted" userCity={user.city} />
+        <PostAdForm
+          listingType="assisted"
+          userCity={user?.city || 'Lahore'}
+          signedIn={Boolean(user)}
+          prefill={{ name: user?.name, phone: user?.phone, email: user?.email }}
+        />
       </div>
     </div>
   );

@@ -189,7 +189,7 @@ export async function ensureDbInitialized() {
         CREATE TABLE IF NOT EXISTS listings (
           id SERIAL PRIMARY KEY,
           reference VARCHAR(40) NOT NULL UNIQUE,
-          user_id INTEGER NOT NULL,
+          user_id INTEGER,
           listing_type VARCHAR(20) DEFAULT 'self' NOT NULL,
           vehicle_kind VARCHAR(20) DEFAULT 'car' NOT NULL,
           make VARCHAR(80) NOT NULL,
@@ -220,6 +220,9 @@ export async function ensureDbInitialized() {
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
         );
+
+        -- Allow guest posts (Pak Property–style skip account)
+        ALTER TABLE listings ALTER COLUMN user_id DROP NOT NULL;
 
         CREATE INDEX IF NOT EXISTS listings_status_idx ON listings(status);
         CREATE INDEX IF NOT EXISTS listings_city_idx ON listings(city);
