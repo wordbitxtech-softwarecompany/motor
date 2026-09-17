@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { MessageSquare, Zap, Bike, Battery, Gauge } from 'lucide-react';
-import { formatPKR } from '@/lib/utils';
+import { formatPKR, formatPowertrain } from '@/lib/utils';
 import { imageForModel, type CatalogModel } from '@/lib/brands-data';
 import { enquiryLink } from '@/lib/contact';
 import { BIKE_FAMILIES, CAR_FAMILIES } from '@/lib/catalog';
@@ -81,7 +81,7 @@ export default function ModelCard({
 
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
           <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide rounded ${PT_STYLE[model.pt] || 'bg-slate-100 text-slate-700'}`}>
-            {model.pt}
+            {formatPowertrain(model.pt)}
           </span>
           {STATUS_STYLE[model.status] && (
             <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide rounded border ${STATUS_STYLE[model.status]}`}>
@@ -108,6 +108,7 @@ export default function ModelCard({
           <p className="text-xs text-slate-500 mt-0.5">
             {model.year} · {model.body}
             {model.battery ? ` · ${model.battery}` : ''}
+            {model.launchedAt ? ` · PK launch ${model.launchedAt}` : ''}
           </p>
 
           <div className="mt-3">
@@ -124,7 +125,7 @@ export default function ModelCard({
               {model.battery ? (
                 <><Battery className="w-3.5 h-3.5 mr-1 text-slate-400" aria-hidden="true" />{model.battery}</>
               ) : (
-                <><Gauge className="w-3.5 h-3.5 mr-1 text-slate-400" aria-hidden="true" />{model.pt}</>
+                <><Gauge className="w-3.5 h-3.5 mr-1 text-slate-400" aria-hidden="true" />{formatPowertrain(model.pt)}</>
               )}
             </span>
             <span className="font-medium">{model.status}</span>

@@ -22,12 +22,13 @@ export default function HeroSection() {
       <div className="absolute inset-0 -z-10">
         <img
           src={mediaUrl(HERO.showroom)}
-          alt="Premium cars for sale in Pakistan — MOTOR marketplace"
-          className="w-full h-full object-cover object-[center_40%] scale-105"
+          alt="Cars in a Pakistan showroom — MOTOR marketplace"
+          className="w-full h-full object-cover object-[center_42%] scale-105"
           fetchPriority="high"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/55 via-slate-950/25 to-slate-950/15" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-slate-950/20" />
+        {/* Same showroom photo as before, overlay ~50% instead of the original 78%. */}
+        <div className="absolute inset-0 bg-slate-950/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-slate-950/28" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-20 sm:pb-24 text-center">

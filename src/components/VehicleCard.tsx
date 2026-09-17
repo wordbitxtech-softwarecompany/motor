@@ -59,7 +59,7 @@ function powertrainBadge(powertrain?: string | null) {
   const cls = map[powertrain] || 'bg-slate-100 text-slate-700';
   return (
     <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide rounded ${cls}`}>
-      {powertrain === 'Hybrid' ? 'HEV' : powertrain}
+      {powertrain === 'Hybrid' ? 'HEV' : powertrain === 'EV' ? 'BEV' : powertrain}
     </span>
   );
 }

@@ -115,6 +115,7 @@ export default async function BrandDetailPage({
             <div className="min-w-0">
               <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-teal-700">
                 {brand.origin} · {isBike ? 'Bikes & Scooters' : 'Cars'}
+                {brand.enteredPakistan ? ` · in Pakistan since ${brand.enteredPakistan}` : ''}
               </span>
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 mt-1">
                 {brand.name} {isBike ? 'Bikes' : 'Cars'} in Pakistan

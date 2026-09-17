@@ -4,19 +4,21 @@
  * available or expected in the Pakistani market. Prices are indicative PKR.
  */
 
-import { SEDAN, SUV, CROSSOVER, HATCH, BIKE, EV, FALLBACK_VEHICLE, mediaUrl } from './media';
+import { SEDAN, SUV, CROSSOVER, HATCH, BIKE, EV, WIKI, FALLBACK_VEHICLE, mediaUrl } from './media';
 
 export type VehicleKind = 'car' | 'bike';
 
 export interface CatalogModel {
   name: string;
   body: string;          // Sedan, Hatchback, SUV, Crossover, MPV, Pickup, Motorcycle, Scooter
-  pt: string;            // Petrol, Diesel, Hybrid, PHEV, EV, REEV
+  pt: string;            // Petrol, Diesel, Hybrid (HEV), PHEV, EV (BEV), REEV
   price: number;         // PKR, 0 = Price Coming Soon
   year: number;
   status: string;        // Dealer Stock, Available in Pakistan, New Arrival, Coming Soon, Expected, Pre-Launch, Imported
   range?: string;
   battery?: string;
+  /** Pakistan model launch / listing date (YYYY-MM-DD). Independent of brand entry year. */
+  launchedAt?: string;
 }
 
 export interface Brand {
@@ -24,43 +26,61 @@ export interface Brand {
   slug: string;
   origin: string;
   kind: VehicleKind;
-  logo: string;          // /images/brands/<slug>.png (official) or '' for monogram fallback
+  logo: string;          // /images/brands/<slug>.svg
   accent: string;        // gradient for monogram fallback
   tagline: string;
-  isNew?: boolean;       // newly launched / launching brand in Pakistan (priority)
+  isNew?: boolean;       // 2025–26 Pakistan launch activity (models, not necessarily first brand entry)
+  /** First year the brand itself was in the Pakistani market. */
+  enteredPakistan?: number;
   models: CatalogModel[];
 }
 
 /* ── Image helpers ───────────────────────────────────── */
 
-/** Body-specific photo pools so different models never share one picture. */
+/** Body-specific photo pools — Pakistani-looking sedans/SUVs/hatches, not European luxury stand-ins. */
 const POOL: Record<string, string[]> = {
-  sedan: [SEDAN.corolla, SEDAN.civic, SEDAN.yaris, SEDAN.dark, SEDAN.silverLux, SEDAN.silverPergola, SEDAN.whiteSunset, SEDAN.silverMotion, SEDAN.roadBmw, SEDAN.whiteSport, SEDAN.audi, SEDAN.mercedes],
+  sedan: [SEDAN.corolla, SEDAN.civic, SEDAN.yaris, SEDAN.dark, SEDAN.silverLux, SEDAN.silverPergola, SEDAN.whiteSunset, SEDAN.silverMotion],
   suv: [SUV.sportage, SUV.fortuner, SUV.whiteSunset, SUV.whiteUrban, SUV.whiteToyota, SUV.whiteStreet, SUV.whiteMountain, SUV.whiteNature, SUV.darkRear, SUV.silverShowroom],
   crossover: [CROSSOVER.corollaCross, CROSSOVER.mgHs, CROSSOVER.deepalS07, SUV.whiteStreet, SUV.silverShowroom, SUV.whiteUrban],
   hatchback: [HATCH.lumin, HATCH.silverMotion, HATCH.whiteUrban, HATCH.red, HATCH.blue, HATCH.blueRear, HATCH.whiteDoors, HATCH.green, HATCH.redClassic],
   utility: [SUV.fortuner, SUV.whiteToyota, SUV.darkRear, SUV.whiteMountain],
-  ev: [EV.tesla, EV.suv, EV.hatch, EV.sedan, EV.compact, EV.urban],
-  motorcycle: [BIKE.commuter, BIKE.classic, BIKE.street, BIKE.touring, BIKE.cruiser, BIKE.parked, BIKE.naked],
-  sportbike: [BIKE.sport, BIKE.naked, BIKE.adventure, BIKE.cafe, BIKE.street, BIKE.touring],
-  scooter: [BIKE.scooterEv, BIKE.scooter, BIKE.city, BIKE.parked, BIKE.classic],
+  ev: [EV.suv, EV.hatch, EV.sedan, EV.compact, EV.urban, EV.crossover],
+  motorcycle70: [WIKI.hondaCd70, WIKI.hondaCd70Classic],
+  motorcycle125: [WIKI.hondaCg125, WIKI.hondaCg125Alt],
+  motorcycle: [WIKI.hondaCd70, WIKI.hondaCg125, BIKE.street, WIKI.hondaCd70Classic],
+  sportbike: [BIKE.sport, BIKE.naked, BIKE.adventure, BIKE.cafe],
+  scooter: [BIKE.scooterEv, BIKE.scooter, BIKE.city, BIKE.parked],
 };
 
-/** Verified model-accurate photography — these always win. */
+/** Verified model-accurate photography — these always win. Longer keys first at lookup. */
 const EXACT: Record<string, string> = {
   'toyota corolla cross': CROSSOVER.corollaCross,
   'toyota corolla': SEDAN.corolla,
   'toyota yaris': SEDAN.yaris,
   'toyota fortuner': SUV.fortuner,
+  'toyota hilux': SUV.fortuner,
   'honda civic': SEDAN.civic,
+  'honda city': SEDAN.yaris,
+  'suzuki alto': HATCH.whiteUrban,
+  'suzuki cultus': HATCH.lumin,
+  'suzuki swift': HATCH.red,
   'kia sportage': SUV.sportage,
   'mg hs': CROSSOVER.mgHs,
   'changan lumin': HATCH.lumin,
   'deepal s07': CROSSOVER.deepalS07,
-  'honda cd 70': BIKE.commuter,
-  'honda cg 125': BIKE.classic,
+  'honda cd 70 dream': WIKI.hondaCd70Classic,
+  'honda cd 70': WIKI.hondaCd70,
+  'honda pridor': WIKI.hondaCd70Classic,
+  'honda cg 125': WIKI.hondaCg125,
+  'honda cb 125f': BIKE.naked,
+  'honda cb 150f': BIKE.sport,
+  'honda cb 250f': BIKE.adventure,
   'yamaha ybr 125': BIKE.street,
+  'yamaha yb 125z': WIKI.hondaCg125Alt,
   'yamaha yzf r15': BIKE.sport,
+  'united us 70': WIKI.hondaCd70Classic,
+  'road prince rp 70': WIKI.hondaCd70,
+  'metro mr 70': WIKI.hondaCd70Classic,
   'kawasaki ninja': BIKE.sport,
   'ktm 200 duke': BIKE.naked,
   'yadea c1s': BIKE.scooterEv,
@@ -105,7 +125,8 @@ export function imageForModel(
 
   if (brand && model) {
     const full = `${brand} ${model}`.toLowerCase();
-    for (const k of Object.keys(EXACT)) {
+    const keys = Object.keys(EXACT).sort((a, c) => c.length - a.length);
+    for (const k of keys) {
       if (full.startsWith(k)) return mediaUrl(EXACT[k]);
     }
   }
@@ -120,7 +141,11 @@ export function imageForModel(
   } else if (b.includes('motorcycle')) {
     const m = (model || '').toLowerCase();
     const sporty = /cb |cbr|ninja|duke|r15|mt-|gr |gsx|tnt|leoncino|trk|zx|adventure|250|400|650/.test(m);
-    base = pt === 'EV' ? POOL.scooter : sporty ? POOL.sportbike : POOL.motorcycle;
+    const is70 = /\b(cd 70|pridor|us 70|rp 70|mr 70|je 70)\b/.test(m) || /\b70\b/.test(m) && !/\b(100|110|125|150|160|250)\b/.test(m);
+    const is125 = /\b(cg 125|ybr 125|yb 125|us 125|rp 125|mr 125|gd 110|gs 150)\b/.test(m);
+    if (is70) base = POOL.motorcycle70;
+    else if (is125) base = POOL.motorcycle125;
+    else base = pt === 'EV' ? POOL.scooter : sporty ? POOL.sportbike : POOL.motorcycle;
   } else if (pt === 'EV' || pt === 'PHEV' || pt === 'REEV') {
     base = POOL.ev;
   } else {
@@ -152,84 +177,217 @@ const L = (slug: string) => `/images/brands/${slug}.svg`;
 export const BRANDS: Brand[] = [
   /* ── 2025–2026 NEW LAUNCHES (priority) ───────────── */
   {
-    name: 'BYD', slug: 'byd', origin: 'China', kind: 'car', logo: L('byd'), isNew: true,
-    accent: 'from-blue-500 to-indigo-800',
-    tagline: 'Blade-battery EVs and DM-i plug-in hybrids now assembling in Pakistan.',
+    name: 'AION', slug: 'aion', origin: 'China', kind: 'car', logo: L('aion'), isNew: true,
+    enteredPakistan: 2025,
+    accent: 'from-violet-600 to-indigo-900',
+    tagline: 'GAC AION battery-electric crossovers — market introduction Nov 2025, official pricing/booking from May 2026.',
     models: [
-      { name: 'Atto 3 Electric', body: 'Crossover', pt: 'EV', price: 12999000, year: 2025, status: 'Available in Pakistan', battery: '60.5 kWh', range: '480 km' },
-      { name: 'Atto 2 Electric', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '45.1 kWh', range: '380 km' },
-      { name: 'Seal Performance AWD', body: 'Sedan', pt: 'EV', price: 15999000, year: 2025, status: 'Available in Pakistan', battery: '82.5 kWh', range: '520 km' },
-      { name: 'Seal Dynamic', body: 'Sedan', pt: 'EV', price: 14499000, year: 2025, status: 'Dealer Stock', battery: '61.4 kWh', range: '460 km' },
-      { name: 'Sealion 7 AWD', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '82.5 kWh', range: '502 km' },
-      { name: 'Sealion 6 DM-i', body: 'Crossover', pt: 'PHEV', price: 0, year: 2026, status: 'Coming Soon', battery: '18.3 kWh', range: '92 km EV' },
-      { name: 'Dolphin Electric', body: 'Hatchback', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '44.9 kWh', range: '405 km' },
-      { name: 'Song Plus DM-i', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '18.3 kWh', range: '110 km EV' },
-      { name: 'Han EV Flagship', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '85.4 kWh', range: '605 km' },
-      { name: 'Shark 6 PHEV Pickup', body: 'Pickup', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '29.6 kWh', range: '100 km EV' },
-      { name: 'Tang EV 7-Seater', body: 'SUV', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '108.8 kWh', range: '530 km' },
-      { name: 'Yuan Up', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '45.1 kWh', range: '401 km' },
+      { name: 'UT', body: 'Hatchback', pt: 'EV', price: 0, year: 2026, status: 'New Arrival', battery: '44 kWh', range: '420 km', launchedAt: '2025-11-06' },
+      { name: 'V', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'New Arrival', battery: '70 kWh', range: '520 km', launchedAt: '2025-11-06' },
+      { name: 'ES', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '58.8 kWh', range: '510 km', launchedAt: '2026-12-01' },
+    ],
+  },
+  {
+    name: 'Alektra', slug: 'alektra', origin: 'Pakistan', kind: 'car', logo: L('alektra'), isNew: true,
+    enteredPakistan: 2025,
+    accent: 'from-cyan-500 to-slate-800',
+    tagline: 'Small battery-electric quadricycle introduced in Pakistan in November 2025.',
+    models: [
+      { name: 'Metro', body: 'Hatchback', pt: 'EV', price: 0, year: 2025, status: 'New Arrival', battery: '10 kWh', range: '120 km', launchedAt: '2025-11-27' },
+    ],
+  },
+  {
+    name: 'AVATR', slug: 'avatr', origin: 'China', kind: 'car', logo: L('avatr'), isNew: true,
+    enteredPakistan: 2025,
+    accent: 'from-fuchsia-700 to-slate-900',
+    tagline: 'Changan × Huawei × CATL luxury battery-electric flagships.',
+    models: [
+      { name: '11', body: 'SUV', pt: 'EV', price: 0, year: 2025, status: 'New Arrival', battery: '90.4 kWh', range: '555 km', launchedAt: '2025-12-20' },
+      { name: '07', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '82 kWh', range: '610 km', launchedAt: '2026-12-01' },
     ],
   },
   {
     name: 'Deepal', slug: 'deepal', origin: 'China', kind: 'car', logo: L('deepal'), isNew: true,
+    enteredPakistan: 2024,
     accent: 'from-emerald-600 to-teal-800',
-    tagline: 'Changan’s premium EV brand — REEV and pure-electric crossovers.',
+    tagline: 'Changan’s premium EV brand — S05 is Pakistan’s first locally assembled REEV (Oct 2025). Brand was already in market before 2025.',
     models: [
-      { name: 'S07 REEV', body: 'Crossover', pt: 'REEV', price: 14200000, year: 2025, status: 'New Arrival', battery: '31.7 kWh', range: '200 km EV / 1,120 km total' },
-      { name: 'S07 Pure Electric', body: 'Crossover', pt: 'EV', price: 15499000, year: 2026, status: 'Coming Soon', battery: '66.8 kWh', range: '520 km' },
-      { name: 'S05 REEV', body: 'Crossover', pt: 'REEV', price: 0, year: 2026, status: 'Expected', battery: '28.4 kWh', range: '180 km EV' },
-      { name: 'L07 Sedan', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '66.8 kWh', range: '515 km' },
-      { name: 'L07 REEV', body: 'Sedan', pt: 'REEV', price: 0, year: 2026, status: 'Expected', battery: '28.4 kWh', range: '1,200 km total' },
-      { name: 'S09 REEV 7-Seater', body: 'SUV', pt: 'REEV', price: 0, year: 2026, status: 'Expected', battery: '35 kWh', range: '1,100 km total' },
-      { name: 'G318 4x4 REEV', body: 'SUV', pt: 'REEV', price: 0, year: 2026, status: 'Pre-Launch', battery: '35.4 kWh', range: '1,000 km total' },
-      { name: 'Hunter REEV Pickup', body: 'Pickup', pt: 'REEV', price: 0, year: 2026, status: 'Expected', battery: '31.2 kWh', range: '180 km EV / 1,030 km total' },
+      { name: 'S05', body: 'Crossover', pt: 'REEV', price: 0, year: 2025, status: 'New Arrival', battery: '28.4 kWh', range: '180 km EV', launchedAt: '2025-10-31' },
+      { name: 'L07', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '66.8 kWh', range: '515 km', launchedAt: '2026-01-01' },
+      { name: 'S07', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '66.8 kWh', range: '520 km', launchedAt: '2026-01-01' },
+      { name: 'E07', body: 'SUV', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '80 kWh', range: '550 km', launchedAt: '2026-01-01' },
+      { name: 'S09', body: 'SUV', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '80 kWh', range: '600 km', launchedAt: '2026-09-01' },
+      { name: 'G318', body: 'SUV', pt: 'REEV', price: 0, year: 2026, status: 'Pre-Launch', battery: '35.4 kWh', range: '1,000 km total', launchedAt: '2026-10-01' },
+    ],
+  },
+  {
+    name: 'Forthing', slug: 'forthing', origin: 'China', kind: 'car', logo: L('forthing'), isNew: true,
+    enteredPakistan: 2025,
+    accent: 'from-sky-600 to-indigo-800',
+    tagline: 'Dongfeng Forthing Friday — launched in Pakistan as both BEV and REEV on 14 Aug 2025.',
+    models: [
+      { name: 'Friday BEV', body: 'MPV', pt: 'EV', price: 0, year: 2025, status: 'Available in Pakistan', battery: '56 kWh', range: '420 km', launchedAt: '2025-08-14' },
+      { name: 'Friday REEV', body: 'MPV', pt: 'REEV', price: 0, year: 2025, status: 'Available in Pakistan', battery: '31 kWh', range: '1,000 km total', launchedAt: '2025-08-14' },
+    ],
+  },
+  {
+    name: 'Hyptec', slug: 'hyptec', origin: 'China', kind: 'car', logo: L('hyptec'), isNew: true,
+    enteredPakistan: 2026,
+    accent: 'from-violet-500 to-slate-900',
+    tagline: 'GAC Hyptec luxury EVs — official pricing/booking phase May 2026.',
+    models: [
+      { name: 'HT Elite', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '80 kWh', range: '650 km', launchedAt: '2026-05-01' },
+      { name: 'HT Ultra Gullwing', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '93 kWh', range: '700 km', launchedAt: '2026-05-01' },
+    ],
+  },
+  {
+    name: 'JAECOO', slug: 'jaecoo', origin: 'China', kind: 'car', logo: L('jaecoo'), isNew: true,
+    enteredPakistan: 2025,
+    accent: 'from-stone-600 to-stone-900',
+    tagline: 'Chery premium SUVs — J6 BEV and J7 PHEV launched in 2025; J5 HEV followed in January 2026.',
+    models: [
+      { name: 'J6', body: 'SUV', pt: 'EV', price: 0, year: 2025, status: 'Available in Pakistan', battery: '65.7 kWh', range: '415 km', launchedAt: '2025-08-01' },
+      { name: 'J7 PHEV', body: 'SUV', pt: 'PHEV', price: 0, year: 2025, status: 'Available in Pakistan', battery: '18.3 kWh', range: '90 km EV', launchedAt: '2025-10-21' },
+      { name: 'J5 HEV', body: 'Crossover', pt: 'Hybrid', price: 0, year: 2026, status: 'New Arrival', battery: '1.8 kWh', launchedAt: '2026-01-12' },
+      { name: 'J8', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '34.5 kWh', range: '160 km EV', launchedAt: '2026-10-01' },
+    ],
+  },
+  {
+    name: 'JMEV', slug: 'jmev', origin: 'China', kind: 'car', logo: L('jmev'), isNew: true,
+    enteredPakistan: 2025,
+    accent: 'from-lime-600 to-emerald-900',
+    tagline: 'Jiangling JMEV battery-electric sedans — Elight launched 2 Sep 2025.',
+    models: [
+      { name: 'Elight', body: 'Sedan', pt: 'EV', price: 0, year: 2025, status: 'Available in Pakistan', battery: '51 kWh', range: '400 km', launchedAt: '2025-09-02' },
+      { name: 'EV3', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '50 kWh', range: '380 km', launchedAt: '2026-01-01' },
     ],
   },
   {
     name: 'Jetour', slug: 'jetour', origin: 'China', kind: 'car', logo: L('jetour'), isNew: true,
+    enteredPakistan: 2024,
     accent: 'from-orange-500 to-amber-700',
-    tagline: 'Adventure-focused SUVs launching across Pakistan in 2026.',
+    tagline: 'Adventure SUVs — T2 i-DM PHEV (Jul 2026) and T1 petrol (Sep 2026) are the latest Pakistan additions.',
     models: [
+      { name: 'T2 i-DM', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Coming Soon', battery: '34.5 kWh', range: '150 km EV', launchedAt: '2026-07-06' },
+      { name: 'T1', body: 'SUV', pt: 'Petrol', price: 0, year: 2026, status: 'Coming Soon', launchedAt: '2026-09-01' },
+      { name: 'G700', body: 'SUV', pt: 'PHEV', price: 0, year: 2027, status: 'Expected', battery: '40 kWh', range: '160 km EV', launchedAt: '2027-01-01' },
       { name: 'X70 Plus 1.5T', body: 'SUV', pt: 'Petrol', price: 8299000, year: 2026, status: 'New Arrival' },
       { name: 'X70 Plus 7-Seater', body: 'SUV', pt: 'Petrol', price: 8799000, year: 2026, status: 'New Arrival' },
-      { name: 'Dashing 1.6T', body: 'Crossover', pt: 'Petrol', price: 7599000, year: 2026, status: 'Coming Soon' },
-      { name: 'T1 Off-Road', body: 'SUV', pt: 'Petrol', price: 0, year: 2026, status: 'Coming Soon' },
-      { name: 'T1 PHEV', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '26 kWh', range: '100 km EV' },
-      { name: 'T2 Adventure 4x4', body: 'SUV', pt: 'Petrol', price: 0, year: 2026, status: 'Coming Soon' },
-      { name: 'T2 PHEV 4WD', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '34.5 kWh', range: '150 km EV' },
-      { name: 'X90 Plus 7-Seater', body: 'SUV', pt: 'Petrol', price: 0, year: 2026, status: 'Expected' },
-      { name: 'Traveller T5', body: 'SUV', pt: 'Petrol', price: 0, year: 2026, status: 'Expected' },
-      { name: 'X50 Compact', body: 'Crossover', pt: 'Petrol', price: 0, year: 2026, status: 'Expected' },
     ],
   },
   {
-    name: 'Omoda', slug: 'omoda', origin: 'China', kind: 'car', logo: L('omoda'), isNew: true,
+    name: 'Kaiyi', slug: 'kaiyi', origin: 'China', kind: 'car', logo: L('kaiyi'), isNew: true,
+    enteredPakistan: 2026,
+    accent: 'from-rose-600 to-slate-900',
+    tagline: 'Chery Kaiyi battery-electric city cars — e-Qute 04 and X3 Pro EV, May 2026.',
+    models: [
+      { name: 'e-Qute 04', body: 'Hatchback', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '31 kWh', range: '301 km', launchedAt: '2026-05-22' },
+      { name: 'X3 Pro EV', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '51 kWh', range: '400 km', launchedAt: '2026-05-22' },
+    ],
+  },
+  {
+    name: 'NEVO', slug: 'nevo', origin: 'China', kind: 'car', logo: L('nevo'), isNew: true,
+    enteredPakistan: 2026,
+    accent: 'from-emerald-500 to-slate-900',
+    tagline: 'Changan NEVO electrified 4x4s — Hunter REEV due August 2026.',
+    models: [
+      { name: 'Hunter', body: 'Pickup', pt: 'REEV', price: 0, year: 2026, status: 'Coming Soon', battery: '31.2 kWh', range: '180 km EV / 1,030 km total', launchedAt: '2026-08-01' },
+      { name: 'A06', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '56 kWh', range: '450 km', launchedAt: '2026-10-01' },
+      { name: 'Q05', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '51 kWh', range: '400 km', launchedAt: '2026-10-01' },
+      { name: 'Q07', body: 'SUV', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '70 kWh', range: '520 km', launchedAt: '2026-12-01' },
+    ],
+  },
+  {
+    name: 'OMODA', slug: 'omoda', origin: 'China', kind: 'car', logo: L('omoda'), isNew: true,
+    enteredPakistan: 2025,
     accent: 'from-slate-700 to-slate-900',
-    tagline: 'Chery’s design-led fastback crossovers — petrol, EV and PHEV.',
+    tagline: 'Chery design-led crossovers — E5 BEV launched 1 Aug 2025; 7 SHS-P PHEV due Aug 2026.',
     models: [
-      { name: 'Omoda 5 1.5T', body: 'Crossover', pt: 'Petrol', price: 7299000, year: 2025, status: 'Available in Pakistan' },
-      { name: 'Omoda 5 EV', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '61 kWh', range: '450 km' },
-      { name: 'Omoda 7 PHEV', body: 'Crossover', pt: 'PHEV', price: 0, year: 2026, status: 'Coming Soon', battery: '19.4 kWh', range: '95 km EV' },
-      { name: 'Omoda C7 Super Hybrid', body: 'Crossover', pt: 'PHEV', price: 0, year: 2026, status: 'Coming Soon', battery: '19.4 kWh', range: '1,200 km total' },
-      { name: 'Omoda 9 SHS', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '34.5 kWh', range: '150 km EV' },
-      { name: 'Omoda 3', body: 'Crossover', pt: 'Petrol', price: 0, year: 2026, status: 'Expected' },
+      { name: 'E5', body: 'Crossover', pt: 'EV', price: 0, year: 2025, status: 'Available in Pakistan', battery: '61 kWh', range: '430 km', launchedAt: '2025-08-01' },
+      { name: '7 SHS-P', body: 'Crossover', pt: 'PHEV', price: 0, year: 2026, status: 'Coming Soon', battery: '19.4 kWh', range: '95 km EV', launchedAt: '2026-08-01' },
     ],
   },
   {
-    name: 'Jaecoo', slug: 'jaecoo', origin: 'China', kind: 'car', logo: L('jaecoo'), isNew: true,
-    accent: 'from-stone-600 to-stone-900',
-    tagline: 'Premium off-road styled SUVs with Super Hybrid powertrains.',
+    name: 'ORA', slug: 'ora', origin: 'China', kind: 'car', logo: L('ora'), isNew: true,
+    enteredPakistan: 2024,
+    accent: 'from-teal-600 to-cyan-800',
+    tagline: 'GWM’s pure-electric hatchbacks — 03 already listed; ORA 5 is the August 2026 BEV addition. Brand was in Pakistan before 2025.',
     models: [
-      { name: 'J7 1.6T', body: 'SUV', pt: 'Petrol', price: 0, year: 2026, status: 'Coming Soon' },
-      { name: 'J7 SHS PHEV', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '18.3 kWh', range: '90 km EV' },
-      { name: 'J8 AWD PHEV', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '34.5 kWh', range: '160 km EV' },
-      { name: 'J8 2.0T AWD', body: 'SUV', pt: 'Petrol', price: 0, year: 2026, status: 'Expected' },
-      { name: 'J5 Compact', body: 'Crossover', pt: 'Petrol', price: 0, year: 2026, status: 'Expected' },
-      { name: 'J5 EV', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '60 kWh', range: '450 km' },
+      { name: '03', body: 'Hatchback', pt: 'EV', price: 8999000, year: 2025, status: 'Available in Pakistan', battery: '47.8 kWh', range: '400 km', launchedAt: '2025-01-01' },
+      { name: '5', body: 'Hatchback', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '63 kWh', range: '500 km', launchedAt: '2026-08-01' },
+      { name: '07', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '83.5 kWh', range: '640 km', launchedAt: '2025-12-01' },
+    ],
+  },
+  {
+    name: 'Riddara', slug: 'riddara', origin: 'China', kind: 'car', logo: L('riddara'), isNew: true,
+    enteredPakistan: 2025,
+    accent: 'from-amber-600 to-stone-900',
+    tagline: 'Geely Riddara electric pickup — RD6 listed for the 2025/26 Pakistan market.',
+    models: [
+      { name: 'RD6', body: 'Pickup', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '86 kWh', range: '400 km', launchedAt: '2026-01-01' },
+    ],
+  },
+  {
+    name: 'XPENG', slug: 'xpeng', origin: 'China', kind: 'car', logo: L('xpeng'), isNew: true,
+    enteredPakistan: 2026,
+    accent: 'from-slate-800 to-black',
+    tagline: 'Smart EVs — L03 BEV and REEV listed for July 2026; G6 and X9 listed for 2026.',
+    models: [
+      { name: 'L03 BEV', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '62 kWh', range: '620 km', launchedAt: '2026-07-01' },
+      { name: 'L03 REEV', body: 'Sedan', pt: 'REEV', price: 0, year: 2026, status: 'Coming Soon', battery: '28 kWh', range: '1,200 km total', launchedAt: '2026-07-01' },
+      { name: 'G6', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '87.5 kWh', range: '755 km', launchedAt: '2026-01-01' },
+      { name: 'X9', body: 'MPV', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '101.5 kWh', range: '702 km', launchedAt: '2026-01-01' },
+    ],
+  },
+  {
+    name: 'ZEEKR', slug: 'zeekr', origin: 'China', kind: 'car', logo: L('zeekr'), isNew: true,
+    enteredPakistan: 2025,
+    accent: 'from-zinc-700 to-zinc-950',
+    tagline: 'Geely premium performance EVs — X, 7X and 009 launched together on 29 Sep 2025.',
+    models: [
+      { name: 'X', body: 'Crossover', pt: 'EV', price: 0, year: 2025, status: 'Available in Pakistan', battery: '69 kWh', range: '512 km', launchedAt: '2025-09-29' },
+      { name: '7X', body: 'SUV', pt: 'EV', price: 0, year: 2025, status: 'Available in Pakistan', battery: '100 kWh', range: '780 km', launchedAt: '2025-09-29' },
+      { name: '009', body: 'MPV', pt: 'EV', price: 0, year: 2025, status: 'Available in Pakistan', battery: '116 kWh', range: '822 km', launchedAt: '2025-09-29' },
+    ],
+  },
+  {
+    name: 'BYD', slug: 'byd', origin: 'China', kind: 'car', logo: L('byd'), isNew: true,
+    enteredPakistan: 2024,
+    accent: 'from-blue-500 to-indigo-800',
+    tagline: 'Blade-battery EVs and DM-i plug-in hybrids assembling in Pakistan — Sealion 6 listed among 2026 upcoming models.',
+    models: [
+      { name: 'Atto 3 Electric', body: 'Crossover', pt: 'EV', price: 12999000, year: 2025, status: 'Available in Pakistan', battery: '60.5 kWh', range: '480 km' },
+      { name: 'Seal Performance AWD', body: 'Sedan', pt: 'EV', price: 15999000, year: 2025, status: 'Available in Pakistan', battery: '82.5 kWh', range: '520 km' },
+      { name: 'Seal Dynamic', body: 'Sedan', pt: 'EV', price: 14499000, year: 2025, status: 'Dealer Stock', battery: '61.4 kWh', range: '460 km' },
+      { name: 'Sealion 6 DM-i', body: 'Crossover', pt: 'PHEV', price: 0, year: 2026, status: 'Coming Soon', battery: '18.3 kWh', range: '92 km EV', launchedAt: '2026-01-01' },
+      { name: 'Sealion 7 AWD', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '82.5 kWh', range: '502 km' },
+      { name: 'Atto 2 Electric', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '45.1 kWh', range: '380 km' },
+      { name: 'Dolphin Electric', body: 'Hatchback', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '44.9 kWh', range: '405 km' },
+    ],
+  },
+  {
+    name: 'iCAUR', slug: 'icaur', origin: 'China', kind: 'car', logo: L('icaur'), isNew: true,
+    enteredPakistan: 2026,
+    accent: 'from-indigo-500 to-slate-900',
+    tagline: 'Upcoming 2026 listings — V27 and V23 on the current new-car watchlist.',
+    models: [
+      { name: 'V27', body: 'SUV', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '80 kWh', range: '550 km', launchedAt: '2026-12-01' },
+      { name: 'V23', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '60 kWh', range: '450 km', launchedAt: '2026-12-01' },
+    ],
+  },
+  {
+    name: 'Denza', slug: 'denza', origin: 'China', kind: 'car', logo: L('denza'), isNew: true,
+    enteredPakistan: 2026,
+    accent: 'from-yellow-500 to-slate-900',
+    tagline: 'BYD premium arm — B5 and B8 listed among upcoming 2026 Pakistan models.',
+    models: [
+      { name: 'B5', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '32 kWh', range: '100 km EV', launchedAt: '2026-12-01' },
+      { name: 'B8', body: 'SUV', pt: 'PHEV', price: 0, year: 2026, status: 'Expected', battery: '45 kWh', range: '120 km EV', launchedAt: '2026-12-01' },
     ],
   },
   {
     name: 'Tank', slug: 'tank', origin: 'China', kind: 'car', logo: L('tank'), isNew: true,
+    enteredPakistan: 2025,
     accent: 'from-stone-700 to-stone-950',
     tagline: 'GWM’s luxury off-road 4x4 brand.',
     models: [
@@ -241,78 +399,19 @@ export const BRANDS: Brand[] = [
     ],
   },
   {
-    name: 'ORA', slug: 'ora', origin: 'China', kind: 'car', logo: L('ora'), isNew: true,
-    accent: 'from-teal-600 to-cyan-800',
-    tagline: 'GWM’s pure-electric hatchbacks and sedans.',
-    models: [
-      { name: 'ORA 03 (Good Cat)', body: 'Hatchback', pt: 'EV', price: 8999000, year: 2025, status: 'Available in Pakistan', battery: '47.8 kWh', range: '400 km' },
-      { name: 'ORA 03 GT', body: 'Hatchback', pt: 'EV', price: 9899000, year: 2025, status: 'Dealer Stock', battery: '63 kWh', range: '480 km' },
-      { name: 'ORA 5 Electric', body: 'Hatchback', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '63 kWh', range: '500 km' },
-      { name: 'ORA 07 Sedan', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '83.5 kWh', range: '640 km' },
-      { name: 'ORA Lightning Cat', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '83.5 kWh', range: '705 km' },
-    ],
-  },
-  {
-    name: 'Aion', slug: 'aion', origin: 'China', kind: 'car', logo: L('aion'), isNew: true,
-    accent: 'from-violet-600 to-indigo-900',
-    tagline: 'GAC Aion pure-electric crossovers and Hyptec luxury EVs.',
-    models: [
-      { name: 'Aion V Plus', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '70 kWh', range: '520 km' },
-      { name: 'Aion V 80 Max', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Coming Soon', battery: '80 kWh', range: '600 km' },
-      { name: 'Aion UT Hatchback', body: 'Hatchback', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '44 kWh', range: '420 km' },
-      { name: 'Aion Y Plus', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '63.2 kWh', range: '490 km' },
-      { name: 'Aion S Plus', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '58.8 kWh', range: '510 km' },
-      { name: 'Hyptec HT', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Pre-Launch', battery: '80 kWh', range: '650 km' },
-      { name: 'Hyptec GT', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Pre-Launch', battery: '75 kWh', range: '600 km' },
-    ],
-  },
-  {
-    name: 'XPeng', slug: 'xpeng', origin: 'China', kind: 'car', logo: L('xpeng'), isNew: true,
-    accent: 'from-slate-800 to-black',
-    tagline: 'Smart EVs with advanced driver-assistance entering Pakistan.',
-    models: [
-      { name: 'XPeng L03 (Mona M03)', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Pre-Launch', battery: '62 kWh', range: '620 km' },
-      { name: 'XPeng G6', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '87.5 kWh', range: '755 km' },
-      { name: 'XPeng G9', body: 'SUV', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '98 kWh', range: '702 km' },
-      { name: 'XPeng P7+', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '76.3 kWh', range: '710 km' },
-      { name: 'XPeng X9 MPV', body: 'MPV', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '101.5 kWh', range: '702 km' },
-    ],
-  },
-  {
-    name: 'Zeekr', slug: 'zeekr', origin: 'China', kind: 'car', logo: L('zeekr'), isNew: true,
-    accent: 'from-zinc-700 to-zinc-950',
-    tagline: 'Geely’s premium performance EV brand.',
-    models: [
-      { name: 'Zeekr X', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '69 kWh', range: '512 km' },
-      { name: 'Zeekr 001', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '100 kWh', range: '705 km' },
-      { name: 'Zeekr 7X', body: 'SUV', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '100 kWh', range: '780 km' },
-      { name: 'Zeekr 009 MPV', body: 'MPV', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '116 kWh', range: '822 km' },
-    ],
-  },
-  {
     name: 'Seres', slug: 'seres', origin: 'China', kind: 'car', logo: L('seres'), isNew: true,
+    enteredPakistan: 2025,
     accent: 'from-slate-600 to-slate-900',
     tagline: 'Electric and range-extended SUVs from DFSK’s premium arm.',
     models: [
       { name: 'Seres 3 EV', body: 'Crossover', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '52.5 kWh', range: '405 km' },
       { name: 'Seres 5 REEV', body: 'SUV', pt: 'REEV', price: 0, year: 2026, status: 'Expected', battery: '40 kWh', range: '180 km EV' },
       { name: 'Seres 7 REEV', body: 'SUV', pt: 'REEV', price: 0, year: 2026, status: 'Imported', battery: '40 kWh', range: '1,100 km total' },
-      { name: 'Aito M5 REEV', body: 'SUV', pt: 'REEV', price: 0, year: 2026, status: 'Imported', battery: '40 kWh', range: '1,200 km total' },
-    ],
-  },
-  {
-    name: 'Avatr', slug: 'avatr', origin: 'China', kind: 'car', logo: L('avatr'), isNew: true,
-    accent: 'from-fuchsia-700 to-slate-900',
-    tagline: 'Changan × Huawei × CATL luxury electric flagships.',
-    models: [
-      { name: 'Avatr 11 Dual Motor', body: 'SUV', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '90.4 kWh', range: '555 km' },
-      { name: 'Avatr 12 Sedan', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Imported', battery: '94.5 kWh', range: '650 km' },
-      { name: 'Avatr 07 REEV', body: 'Crossover', pt: 'REEV', price: 0, year: 2026, status: 'Expected', battery: '39 kWh', range: '1,200 km total' },
-      { name: 'Avatr 06', body: 'Sedan', pt: 'EV', price: 0, year: 2026, status: 'Expected', battery: '82.2 kWh', range: '650 km' },
     ],
   },
   {
     name: 'Leapmotor', slug: 'leapmotor', origin: 'China', kind: 'car', logo: L('leapmotor'), isNew: true,
+    enteredPakistan: 2026,
     accent: 'from-lime-600 to-green-900',
     tagline: 'Value-driven EVs and range-extended SUVs.',
     models: [

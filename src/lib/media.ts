@@ -1,9 +1,10 @@
 /**
  * MOTOR Pakistan — central media registry.
  *
- * Photographic assets are CDN URLs (Pexels, licensed for commercial use).
- * We do not scrape PakWheels listing photos. Runtime serving goes through
- * `/media/pexels` so images load reliably in Pakistan.
+ * Photographic assets are CDN URLs (Pexels, licensed for commercial use)
+ * plus a small Wikimedia Commons allowlist for Pakistan-specific bikes
+ * (Honda CD 70 / CG 125). We do not scrape PakWheels listing photos.
+ * Runtime serving goes through `/media/pexels` and `/media/wiki`.
  *
  * Local copies remain in `public/images/**` (SVG marks only); this module
  * is the single source of truth for photography.
@@ -17,9 +18,9 @@ function px(id: number, w = 1200, h = 750): string {
 }
 
 /** Neutral fallback used if any image fails to load at runtime. */
-export const FALLBACK_VEHICLE = px(170811);
+export const FALLBACK_VEHICLE = px(33359730);
 
-/** Same-origin proxy so Pexels hotlinks work in Pakistan. */
+/** Same-origin proxy so remote photos load reliably in Pakistan. */
 export function mediaUrl(src?: string | null): string {
   const raw = src || FALLBACK_VEHICLE;
   if (raw.startsWith('https://images.pexels.com')) {
@@ -31,17 +32,17 @@ export function mediaUrl(src?: string | null): string {
 /* ── Hero / showroom ─────────────────────────────────── */
 
 export const HERO = {
-  /** Primary homepage hero — bright outdoor luxury car (not a dark showroom). */
-  showroom: px(1545743, 2000, 1100),
+  /** Original dark indoor showroom — overlay is applied in HeroSection. */
+  showroom: px(29566879, 2000, 1100),
   /** Secondary outdoor angle. */
   showroomAlt: px(3802510, 2000, 1100),
   /** Daylight road scene used by some landing pages. */
-  cityscape: px(170811, 1800, 1000),
-  /** Motorcycle hero. */
-  bikes: px(2116475, 1800, 1000),
+  cityscape: px(33359730, 1800, 1000),
+  /** Motorcycle hero — street commuter, not a superbike. */
+  bikes: px(2393816, 1800, 1000),
 } as const;
 
-/* ── Vehicle photography pools ───────────────────────── */
+/* ── Pakistan-common vehicle photography ─────────────── */
 
 export const SEDAN = {
   corolla: px(33359730),
@@ -52,10 +53,6 @@ export const SEDAN = {
   silverPergola: px(33359730),
   whiteSunset: px(19868900),
   silverMotion: px(19868899),
-  roadBmw: px(170811),
-  whiteSport: px(1545743),
-  audi: px(909907),
-  mercedes: px(112460),
 } as const;
 
 export const SUV = {
@@ -90,39 +87,52 @@ export const HATCH = {
 } as const;
 
 export const EV = {
-  tesla: px(3729464),
   compact: px(116675),
   hatch: px(12310882),
   suv: px(8983368),
   sedan: px(210019),
   urban: px(1402787),
+  crossover: px(20667627),
 } as const;
 
-/* ── Two-wheeler photography (real motorcycles / scooters) ─ */
+/* ── Wikimedia Commons — Pakistan Honda commuters ───── */
+
+export const WIKI = {
+  hondaCd70: '/media/wiki/Honda_70_2025.jpg',
+  hondaCd70Classic: '/media/wiki/Honda_cd_70.jpg',
+  hondaCg125: '/media/wiki/Honda_CG125_01.jpg',
+  hondaCg125Alt: '/media/wiki/CG125_1.jpg',
+} as const;
+
+/* ── Two-wheeler photography ─────────────────────────── */
 
 export const BIKE = {
-  commuter: px(2393816),
+  commuter70: WIKI.hondaCd70,
+  commuter70Alt: WIKI.hondaCd70Classic,
+  commuter125: WIKI.hondaCg125,
+  commuter125Alt: WIKI.hondaCg125Alt,
+  commuter: WIKI.hondaCd70,
   sport: px(595807),
   scooterEv: px(1413412),
   scooter: px(2116475),
   cruiser: px(258092),
   adventure: px(2519374),
   naked: px(595807),
-  city: px(2393816),
-  classic: px(2393816),
+  city: px(2116475),
+  classic: WIKI.hondaCg125,
   touring: px(1715193),
   cafe: px(1715193),
-  street: px(2116475),
+  street: px(2393816),
   closeup: px(1413412),
   parked: px(258092),
 } as const;
 
 export const SCENE = {
-  usedCars: px(170811, 800, 520),
+  usedCars: px(33359730, 800, 520),
   newCars: px(3802510, 800, 520),
-  bikes: px(2116475, 800, 520),
-  ev: px(909907, 800, 520),
-  rent: px(170811, 800, 520),
+  bikes: px(2393816, 800, 520),
+  ev: px(8983368, 800, 520),
+  rent: px(32340203, 800, 520),
   sell: px(1592384, 800, 520),
   lahore: px(18108314, 900, 600),
   islamabad: px(1402787, 900, 600),
@@ -154,7 +164,7 @@ const LEGACY: Record<string, string> = {
   '/images/showroom-hero.jpg': HERO.showroom,
   '/images/showroom-hero-alt.jpg': HERO.showroomAlt,
   '/images/hero-lahore.jpg': HERO.cityscape,
-  '/images/vehicles/bike-commuter.svg': BIKE.commuter,
+  '/images/vehicles/bike-commuter.svg': BIKE.commuter70,
   '/images/vehicles/bike-sport.svg': BIKE.sport,
   '/images/vehicles/scooter-electric.svg': BIKE.scooterEv,
 };

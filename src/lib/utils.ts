@@ -33,3 +33,11 @@ export function formatPriceLacs(amount: number): string {
 export function classNames(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(' ');
 }
+
+/** Display label for catalog powertrains (BEV / HEV / PHEV / REEV). */
+export function formatPowertrain(pt?: string | null): string {
+  if (!pt) return '';
+  if (pt === 'EV') return 'BEV';
+  if (pt === 'Hybrid') return 'HEV';
+  return pt;
+}

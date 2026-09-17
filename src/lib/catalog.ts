@@ -47,6 +47,8 @@ export interface ModelFamily {
   image: string;
   battery?: string;
   range?: string;
+  launchedAt?: string;
+  enteredPakistan?: number;
   searchKeywords: string[];
 }
 
@@ -89,20 +91,26 @@ const FAMILY_RULES: string[] = [
   // Chery / Omoda / Jaecoo
   'Tiggo 8', 'Tiggo 4', 'Tiggo 7', 'Tiggo 9', 'Arrizo',
   'Omoda 5', 'Omoda 7', 'Omoda C7', 'Omoda 9', 'Omoda 3',
-  'J7', 'J8', 'J5',
+  'J6', 'J7', 'J8', 'J5',
   // BYD
-  'Atto 3', 'Atto 2', 'Seal', 'Sealion 7', 'Sealion 6', 'Dolphin', 'Song Plus',
+  'Atto 3', 'Atto 2', 'Sealion 7', 'Sealion 6', 'Seal', 'Dolphin', 'Song Plus',
   'Han', 'Shark 6', 'Tang', 'Yuan Up',
-  // Deepal / Seres / Avatr / Leapmotor / Aion / XPeng / Zeekr
-  'S07', 'S05', 'L07', 'S09', 'G318', 'Hunter REEV',
+  // Deepal / Seres / Avatr / Leapmotor / AION / Hyptec / XPENG / ZEEKR
+  'S07', 'S05', 'L07', 'E07', 'S09', 'G318',
   'Seres 3', 'Seres 5', 'Seres 7', 'Aito M5',
   'Avatr 11', 'Avatr 12', 'Avatr 07', 'Avatr 06',
   'Leapmotor C10', 'Leapmotor T03', 'Leapmotor B10',
-  'Aion V', 'Aion UT', 'Aion Y', 'Aion S', 'Hyptec HT', 'Hyptec GT',
-  'XPeng L03', 'XPeng G6', 'XPeng G9', 'XPeng P7', 'XPeng X9',
+  'Aion V', 'Aion UT', 'Aion Y', 'Aion S', 'Aion ES',
+  'Hyptec HT', 'HT Elite', 'HT Ultra', 'Hyptec GT',
+  'L03 BEV', 'L03 REEV', 'L03', 'XPeng G6', 'XPeng G9', 'XPeng P7', 'XPeng X9',
   'Zeekr X', 'Zeekr 001', 'Zeekr 7X', 'Zeekr 009',
-  // Jetour
-  'X70 Plus', 'X90 Plus', 'Dashing', 'T1', 'T2', 'Traveller', 'X50',
+  // Jetour / Forthing / JMEV / Kaiyi / NEVO / Riddara / iCAUR / Denza
+  'X70 Plus', 'X90 Plus', 'Dashing', 'T2 i-DM', 'T2', 'T1', 'G700', 'Traveller', 'X50',
+  'Friday', 'Elight', 'EV3', 'e-Qute', 'X3 Pro',
+  'Hunter', 'A06', 'Q05', 'Q07', 'RD6', 'V27', 'V23',
+  'Denza B5', 'Denza B8',
+  'Omoda 5', 'Omoda 7', 'Omoda C7', 'Omoda 9', 'Omoda 3', 'Omoda E5', 'E5', '7 SHS-P',
+  'ORA 03', 'ORA 5', 'ORA 07', 'ORA Lightning Cat',
   // Proton / BAIC / DFSK / Isuzu / others
   'Saga', 'X70', 'X90', 'e.MAS 7',
   'BJ40', 'BJ30', 'X55', 'X35', 'EU5',
@@ -209,6 +217,8 @@ function buildFamilies(brands: Brand[], kind: 'car' | 'bike'): ModelFamily[] {
         image: imageForModel(models[0].body, 0, brand.name, models[0].name, models[0].pt),
         battery: withBattery?.battery,
         range: withRange?.range,
+        launchedAt: models.find((m) => m.launchedAt)?.launchedAt,
+        enteredPakistan: brand.enteredPakistan,
         searchKeywords: Array.from(
           new Set([
             famName.toLowerCase(),

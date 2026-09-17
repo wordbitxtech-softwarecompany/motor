@@ -50,7 +50,7 @@ const HOME_FAQS = [
   },
   {
     q: 'Which electric cars are available in Pakistan?',
-    a: 'Battery-electric options currently listed include the Changan Lumin, MG ZS EV, BYD Atto 3, BYD Seal and ORA 03, with further models such as the MG4 EV and BYD Sealion 7 expected. Availability varies by city and dealer allocation.',
+    a: 'Battery-electric (BEV) options listed include the Changan Lumin, MG ZS EV, BYD Atto 3, ORA 03, OMODA E5, JAECOO J6, JMEV Elight, AION UT/V and ZEEKR X/7X/009, with further 2026 models such as XPENG L03 and Hyptec HT expected. Availability varies by city and dealer allocation.',
   },
   {
     q: 'What is the difference between a hybrid, PHEV and EV?',

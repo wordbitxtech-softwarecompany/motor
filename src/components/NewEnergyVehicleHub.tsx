@@ -3,13 +3,13 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Zap, BatteryCharging, ArrowRight, Fuel, Info, Sparkles } from 'lucide-react';
-import { formatPKR } from '@/lib/utils';
+import { formatPKR, formatPowertrain } from '@/lib/utils';
 import { BRANDS, imageForModel } from '@/lib/brands-data';
 
 type TabKey = 'EV' | 'HEV' | 'PHEV' | 'REEV';
 
 const TAB_META: { key: TabKey; label: string; desc: string; accent: string }[] = [
-  { key: 'EV', label: 'EV', desc: 'Pure electric', accent: 'bg-cyan-400 text-slate-950' },
+  { key: 'EV', label: 'BEV', desc: 'Battery electric', accent: 'bg-cyan-400 text-slate-950' },
   { key: 'HEV', label: 'HEV', desc: 'Self-charging', accent: 'bg-amber-400 text-slate-950' },
   { key: 'PHEV', label: 'PHEV', desc: 'Plug-in hybrid', accent: 'bg-violet-400 text-slate-950' },
   { key: 'REEV', label: 'REEV', desc: 'Range extended', accent: 'bg-emerald-400 text-slate-950' },
@@ -153,7 +153,7 @@ export default function NewEnergyVehicleHub() {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
                 <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
                   <span className="px-2 py-0.5 text-[9px] font-black uppercase tracking-wide rounded bg-teal-400 text-slate-950">
-                    {m.pt}
+                    {formatPowertrain(m.pt)}
                   </span>
                   {['Coming Soon', 'Expected', 'Pre-Launch', 'New Arrival'].includes(m.status) && (
                     <span className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide rounded bg-slate-950/85 text-amber-300 border border-amber-400/30">

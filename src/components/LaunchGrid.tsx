@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Info } from 'lucide-react';
-import { formatPKR } from '@/lib/utils';
+import { formatPKR, formatPowertrain } from '@/lib/utils';
 import type { ModelFamily } from '@/lib/catalog';
 
 const STATUS_STYLE: Record<string, string> = {
@@ -73,7 +73,7 @@ export default function LaunchGrid({ families }: { families: ModelFamily[] }) {
               <div className="mt-3 flex flex-wrap gap-1.5">
                 <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-slate-100 text-slate-700">{f.body}</span>
                 {f.powertrains.slice(0, 2).map((p) => (
-                  <span key={p} className="px-2 py-0.5 text-[10px] font-bold rounded bg-teal-50 text-teal-700">{p}</span>
+                  <span key={p} className="px-2 py-0.5 text-[10px] font-bold rounded bg-teal-50 text-teal-700">{formatPowertrain(p)}</span>
                 ))}
               </div>
 

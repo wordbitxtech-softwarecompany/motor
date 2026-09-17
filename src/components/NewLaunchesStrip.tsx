@@ -11,10 +11,10 @@ export default function NewLaunchesStrip() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-600 text-white text-[10px] font-black uppercase tracking-[0.18em]">
               <Sparkles className="w-3 h-3" />
-              2026 Launches
+              2025–26
             </span>
             <h2 className="text-lg sm:text-xl font-black tracking-tight text-slate-900">
-              New Brands in Pakistan
+              2025–26 Pakistan launches
             </h2>
           </div>
           <Link href="/upcoming-cars-pakistan" className="text-[13px] font-bold text-slate-900 hover:text-teal-700 inline-flex items-center">
@@ -37,7 +37,8 @@ export default function NewLaunchesStrip() {
                 </span>
                 <span className="text-[13px] font-bold text-slate-900 group-hover:text-teal-700 transition-colors">{b.name}</span>
                 <span className="text-[10px] text-slate-500 mt-0.5">
-                  {b.models.length} models{evCount ? ` · ${evCount} electrified` : ''}
+                  {b.enteredPakistan ? `In PK since ${b.enteredPakistan}` : `${b.models.length} models`}
+                  {evCount ? ` · ${evCount} electrified` : ''}
                 </span>
               </Link>
             );

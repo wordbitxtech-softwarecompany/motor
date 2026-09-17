@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
     // source. Declared here so next/image can optimise them in production.
     remotePatterns: [
       { protocol: "https", hostname: "images.pexels.com", pathname: "/photos/**" },
+      { protocol: "https", hostname: "upload.wikimedia.org", pathname: "/wikipedia/commons/**" },
     ],
   },
 
